@@ -5,9 +5,10 @@ EXPOSE 8080
 RUN npm install -g webpack-dev-server
 
 WORKDIR /code
-COPY ./code/package.json /code/
-RUN npm install
+COPY ./package.json /code/
+RUN npm install --production
 
-COPY ./code/webpack.config.js /code
+COPY ./webpack.config.js /code
+COPY ./tsconfig.json /code
 
 CMD npm run dev

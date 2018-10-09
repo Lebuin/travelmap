@@ -3,6 +3,6 @@ services:
   node:
     build: ./
     volumes:
-        - ./code/src:/code/src
+        - ./src:/code/src
     ports:
       - "80:80"

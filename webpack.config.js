@@ -1,49 +1,74 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-    mode: 'development',
+  mode: 'development',
 
-    context: '/code',
-    devtool: 'source-map',
-    entry: {
-        app: './src/app.jsx',
-    },
-    devServer: {
-        contentBase: './dist',
-        port: 80,
-        host: '0.0.0.0',
-        disableHostCheck: true,
-        hot: true,
-    },
+  context: '/code',
+  devtool: 'source-map',
+  entry: {
+    app: './src/app.tsx',
+  },
+  devServer: {
+    contentBase: './dist',
+    port: 80,
+    host: '0.0.0.0',
+    disableHostCheck: true,
+    hot: true,
+  },
 
-    plugins: [
-        new CleanWebpackPlugin(['dist']),
-        new HtmlWebpackPlugin({
-          title: 'Travelmap',
-          template: './src/index.html'
-        }),
-        new webpack.HotModuleReplacementPlugin(),
-        new webpack.ProvidePlugin({
-            "React": "react",
-        }),
-    ],
+  plugins: [
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      title: 'Travelmap',
+      template: './src/index.html',
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
+    new webpack.HotModuleReplacementPlugin(),
+  ],
 
-    module: {
-        rules: [
-        {
-            test: /\.jsx?$/,
-            exclude: /node_modules/,
-            use: {
-            loader: "babel-loader"
-            }
-        }
+  resolve: {
+    extensions: ['.js', '.ts', '.tsx']
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(png|jpe?g|svg)$/,
+        loader: 'file-loader',
+        options: {
+          'name': '../img/[name].[ext]',
+        },
+      },
+      // {
+      //   test: /\.(woff2?|ttf|otf|eot)$/,
+      //   loader: 'file-loader',
+      //   options: {
+      //     'name': '../font/[name].[ext]',
+      //   },
+      // },
+      {
+        test: /\.s?css$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader',
         ],
-    },
+      },
+    ],
+  },
 
-    output: {
-        filename: '[name].js',
-        path: '/code/dist',
-    },
-}
+  output: {
+    filename: '[name].js',
+    path: '/code/dist',
+  },
+};
