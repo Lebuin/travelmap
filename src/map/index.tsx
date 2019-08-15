@@ -1,5 +1,5 @@
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-export * from './MapContainer';
+export { default as MapContainer } from './MapContainer';
 import './MapContainer.scss';
