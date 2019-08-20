@@ -46,16 +46,16 @@ module.exports = {
         test: /\.(png|jpe?g|svg)$/,
         loader: 'file-loader',
         options: {
-          'name': '../img/[name].[ext]',
+          name: 'assets/img/[name].[ext]',
         },
       },
-      // {
-      //   test: /\.(woff2?|ttf|otf|eot)$/,
-      //   loader: 'file-loader',
-      //   options: {
-      //     'name': '../font/[name].[ext]',
-      //   },
-      // },
+      {
+        test: /\.(woff2?|ttf|otf|eot)$/,
+        loader: 'file-loader',
+        options: {
+          name: 'assets/font/[name].[ext]',
+        },
+      },
       {
         test: /\.s?css$/,
         use: [
@@ -68,7 +68,7 @@ module.exports = {
   },
 
   output: {
-    filename: '[name].js',
+    filename: 'assets/js/[name].js',
     path: '/code/dist',
   },
 };

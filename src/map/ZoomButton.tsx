@@ -2,26 +2,26 @@ import * as React from 'react';
 
 interface ZoomButtonProps {
   disabled: boolean,
-  onClick(): void,
+  onClick(): any,
 }
 
 abstract class ZoomButton extends React.Component<ZoomButtonProps, {}> {
-  text: string;
+  faName: string;
 
   render() {
     return <button
-      className="btn btn--raised zoom-btn"
+      className="btn--map"
       onClick={this.props.onClick}
       disabled={this.props.disabled}
     >
-      {this.text}
+      <i className={`far ${this.faName}`}></i>
     </button>
   }
 }
 
 export class ZoomInButton extends ZoomButton {
-  text = '+';
+  faName = 'fa-plus';
 }
 export class ZoomOutButton extends ZoomButton {
-  text = '−';
+  faName = 'fa-minus';
 }

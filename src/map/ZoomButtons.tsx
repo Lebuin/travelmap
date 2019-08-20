@@ -5,7 +5,7 @@ interface ZoomButtonsProps {
   zoomLevel: number,
   minZoomLevel: number,
   maxZoomLevel: number,
-  onZoomLevelChange(zoomLevel: number): void,
+  onZoomLevelChange(zoomLevel: number): any,
 };
 
 export default class ZoomButtons extends React.Component<ZoomButtonsProps, {}> {
@@ -29,7 +29,7 @@ export default class ZoomButtons extends React.Component<ZoomButtonsProps, {}> {
 
   render() {
     return (
-      <div className="zoom-btn__wrapper">
+      <div className="zoom-btns">
         <ZoomInButton
           disabled={this.props.zoomLevel >= this.props.maxZoomLevel}
           onClick={this.onZoomIn}

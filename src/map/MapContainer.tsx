@@ -1,37 +1,13 @@
 import * as React from 'react';
 import { Map as LeafletMap, TileLayer } from 'react-leaflet';
 import ZoomButtons from './ZoomButtons';
+import tileProviders, { TileProvider } from './tileProviders';
+import LayerPicker from './LayerPicker';
 
 
-const MAPBOX_ACCESS_TOKEN: string =
-  'pk.eyJ1IjoibGVidWluIiwiYSI6ImNpcG90ZGRsODAwMmZoem5iejVieGNrdjkifQ.vb73zLJdMoc8WiyYLk4SCg';
-const OSM_ATTRIBUTION: string = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors';
-const MAPBOX_ATTRIBUTION: string =
-  '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a>' + ' ' + OSM_ATTRIBUTION;
-const MIN_ZOOM_LEVEL = 0;
-const MAX_ZOOM_LEVEL = 21;
+const MIN_ZOOM_LEVEL: number = 0;
+const MAX_ZOOM_LEVEL: number = 21;
 
-
-enum TileProvider {
-  MapboxStreets,
-}
-
-interface TileProviderInfo {
-  name: string;
-  url: string;
-  attribution: string;
-}
-
-const tileProviders = new Map<TileProvider, TileProviderInfo>([
-  [
-    TileProvider.MapboxStreets,
-    {
-      name: 'Mapbox',
-      url: 'https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + MAPBOX_ACCESS_TOKEN,
-      attribution: MAPBOX_ATTRIBUTION,
-    },
-  ],
-]);
 
 
 
@@ -39,31 +15,31 @@ interface MapContainerState {
   lat: number;
   lon: number;
   zoomLevel: number;
+  tileProvider: TileProvider,
 }
 
 
 export default class MapContainer extends React.Component<{}, MapContainerState> {
-  private tileProvider: TileProvider;
-
   constructor(props: {}) {
     super(props);
     this._bind();
 
-    this.tileProvider = TileProvider.MapboxStreets;
     this.state = {
       lat: 50.6,
       lon: 4.3,
       zoomLevel: 9,
+      tileProvider: tileProviders[0],
     };
   }
 
   _bind() {
     this.setZoomLevel = this.setZoomLevel.bind(this);
     this.onLeafletZoomLevel = this.onLeafletZoomLevel.bind(this);
+    this.setTileProvider = this.setTileProvider.bind(this);
   }
 
 
-  setZoomLevel(zoomLevel) {
+  setZoomLevel(zoomLevel: number) {
     this.setState({
       zoomLevel: zoomLevel,
     });
@@ -74,9 +50,14 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   }
 
 
-  public render() {
-    const tileProviderInfo: TileProviderInfo = tileProviders.get(this.tileProvider);
+  setTileProvider(tileProvider: TileProvider) {
+    this.setState({
+      tileProvider: tileProvider,
+    });
+  }
 
+
+  public render() {
     return (
       <React.Fragment>
         <LeafletMap
@@ -88,10 +69,16 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           onZoomEnd={this.onLeafletZoomLevel}
         >
           <TileLayer
-            attribution={tileProviderInfo.attribution}
-            url={tileProviderInfo.url}
+            attribution={this.state.tileProvider.attribution}
+            url={this.state.tileProvider.url}
           />
         </LeafletMap>
+
+        <LayerPicker
+          tileProvider={this.state.tileProvider}
+          setTileProvider={this.setTileProvider}
+        ></LayerPicker>
+
         <ZoomButtons
           zoomLevel={this.state.zoomLevel}
           minZoomLevel={MIN_ZOOM_LEVEL}
