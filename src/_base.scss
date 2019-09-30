@@ -13,14 +13,30 @@ html, body {
 h1,
 h2,
 h3 {
-  font-weight: 100;
+  font-weight: 300;
+}
+
+
+.muted {
+  color: #777;
 }
 
 
 
 .btn {
   background: white;
-  border: 1px solid adjust-color(white, $lightness: -20%);
+  border: 0;
+  // border: 1px solid adjust-color(white, $lightness: -20%);
+  cursor: pointer;
+
+  &--round {
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   &:hover {
     background: adjust-color(white, $lightness: -5%);

@@ -3,6 +3,7 @@ import { Map as LeafletMap, TileLayer } from 'react-leaflet';
 import ZoomButtons from './ZoomButtons';
 import tileProviders, { TileProvider } from './tileProviders';
 import LayerPicker from './LayerPicker';
+import TravelPicker from './TravelPicker';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -74,10 +75,14 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           />
         </LeafletMap>
 
-        <LayerPicker
-          tileProvider={this.state.tileProvider}
-          setTileProvider={this.setTileProvider}
-        ></LayerPicker>
+        <div className="picker-btns">
+          <LayerPicker
+            tileProvider={this.state.tileProvider}
+            setTileProvider={this.setTileProvider}
+          ></LayerPicker>
+
+          <TravelPicker></TravelPicker>
+        </div>
 
         <ZoomButtons
           zoomLevel={this.state.zoomLevel}

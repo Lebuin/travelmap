@@ -1,5 +1,9 @@
-$button-size: 50px;
-$button-font-size: 30px;
+$btn-size: 56px;
+$btn-position: 4px;
+$btn-margin: 12px;
+$btn-font-size: 30px;
+
+$layer-picker-padding-left: 10px;
 
 
 
@@ -9,26 +13,13 @@ $button-font-size: 30px;
 }
 
 
-.leaflet-touch {
-  .leaflet-bar a {
-    width: $button-size;
-    height: $button-size;
-    line-height: $button-size;
-  }
-
-  .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-    font-size: $button-font-size;
-  }
-}
-
-
 .btn--map {
   @extend .btn;
   @extend .btn--raised;
 
-  margin-bottom: 10px;
-  width: 48px;
-  height: 48px;
+  margin: $btn-margin;
+  width: $btn-size;
+  height: $btn-size;
   border-radius: 50%;
   font-size: 22px;
 
@@ -41,19 +32,15 @@ $button-font-size: 30px;
 
 
 .layer-picker {
-  &__btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-
   &__wrapper {
-    position: absolute;
+    position: fixed;
     z-index: 100;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+
+    display: flex;
   }
 
   &__overlay {
@@ -69,33 +56,74 @@ $button-font-size: 30px;
   top: 0;
   bottom: 0;
   left: 0;
-  padding-top: 10px;
-  min-width: 200px;
-  max-width: 80%;
+  min-width: 30%;
+  max-width: 70%;
+
+  display: flex;
+  flex-direction: column;
 
   background: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 
-  > * {
-    padding-left: 10px;
-    padding-right: 10px;
+  &__header {
+    display: flex;
+    margin: 10px 4px 10px $layer-picker-padding-left;
+  }
+
+  &__content {
+    flex: 1 0 0;
+    overflow: auto;
+  }
+
+  &__title {
+    flex-grow: 1;
+    margin-bottom: 0;
   }
 
   &__item {
-    border: none;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    width: 100%;
-    text-align: left;
+    padding: 2px 0;
+    display: flex;
 
     &.selected {
-      background: #ccc;
+      background: adjust-color(white, $lightness: -10%);;
     }
   }
+
+  &__item-border {
+    width: 3px;
+  }
+
+  &__item-icon {
+    align-self: center;
+    width: 44px;
+    margin-left: 2px;
+    margin-right: -2px;
+    text-align: center;
+    font-size: 24px;
+    white-space: nowrap;
+  }
+
+  &__item-content {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 24px 8px $layer-picker-padding-left;
+  }
+
+  &__item-info {
+    @extend .muted;
+    font-size: 12px;
+    font-weight: bold;
+  }
+}
+
+.picker-btns {
+  position: absolute;
+  top: $btn-position;
+  left: $btn-position;
 }
 
 .zoom-btns {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: $btn-position;
+  right: $btn-position;
 }

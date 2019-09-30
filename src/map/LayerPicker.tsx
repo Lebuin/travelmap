@@ -65,22 +65,31 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
       <div className="layer-picker__wrapper">
         <div className="layer-picker__overlay" onClick={this.toggleMenu}></div>
         <div className="layer-picker">
-          <h2>Layers</h2>
-          {tileProviders.map(tileProvider => {
-            let classNames = 'btn layer-picker__item';
-            if(tileProvider === this.props.tileProvider) {
-              classNames += ' selected';
-            }
-            return (
-              <button
-                key={tileProvider.name}
-                className={classNames}
-                onClick={this.setTileProvider.bind(this, tileProvider)}
-              >
-                {tileProvider.name}
-              </button>
-            );
-          })}
+          <div className="layer-picker__header">
+            <h2 className="layer-picker__title">Layers</h2>
+            <div className="btn btn--round" onClick={this.toggleMenu}>
+              <i className="far fa-times"></i>
+            </div>
+          </div>
+          <div className="layer-picker__content">
+            {tileProviders.map(tileProvider => {
+              let classNames = 'btn layer-picker__item';
+              if(tileProvider === this.props.tileProvider) {
+                classNames += ' selected';
+              }
+              return (
+                <div
+                  key={tileProvider.name}
+                  className={classNames}
+                  onClick={this.setTileProvider.bind(this, tileProvider)}
+                >
+                  <div className="layer-picker__item-content">
+                    {tileProvider.name}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

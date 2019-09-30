@@ -57,6 +57,13 @@ module.exports = {
         },
       },
       {
+        test: /\.kml$/,
+        loader: 'file-loader',
+        options: {
+          name: 'assets/kml/[name].[ext]',
+        },
+      },
+      {
         test: /\.s?css$/,
         use: [
           'style-loader',
