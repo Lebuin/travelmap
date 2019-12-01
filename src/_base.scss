@@ -18,13 +18,12 @@ h3 {
 
 
 .muted {
-  color: #777;
+  color: #61666b;
 }
 
 
 
 .btn {
-  background: white;
   border: 0;
   // border: 1px solid adjust-color(white, $lightness: -20%);
   cursor: pointer;
@@ -39,14 +38,25 @@ h3 {
   }
 
   &:hover {
-    background: adjust-color(white, $lightness: -5%);
+    background: rgba(0, 0, 0, .05);
   }
   &:focus {
     outline: none;
   }
   &:active,
   &.active {
-    background: adjust-color(white, $lightness: -10%);
+    background: rgba(0, 0, 0, .1);
+  }
+
+  &--white {
+    background: white;
+    &:hover {
+      background: adjust-color(white, $lightness: -5%);
+    }
+    &:active,
+    &.active {
+      background: adjust-color(white, $lightness: -10%);
+    }
   }
 
   &--raised {

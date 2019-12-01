@@ -6,14 +6,13 @@ const webpack = require('webpack');
 module.exports = {
   mode: 'development',
 
-  context: '/code',
   devtool: 'source-map',
   entry: {
     app: './src/app.tsx',
   },
   devServer: {
     contentBase: './dist',
-    port: 80,
+    port: 8080,
     host: '0.0.0.0',
     disableHostCheck: true,
     hot: true,

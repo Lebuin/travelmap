@@ -1,14 +1,20 @@
 import * as React from 'react';
-import { travels } from './travels';
+import { Travel } from './travels';
 
+
+interface TravelPickerProps {
+  travels: Array<Travel>,
+  selectedTravel: Travel,
+  setSelectedTravel(travel: Travel): any,
+}
 
 interface TravelPickerState {
   showMenu: boolean,
 }
 
 
-export default class TravelPicker extends React.Component<{}, TravelPickerState> {
-  constructor(props: {}) {
+export default class TravelPicker extends React.Component<TravelPickerProps, TravelPickerState> {
+  constructor(props: TravelPickerProps) {
     super(props);
     this._bind();
 
@@ -29,8 +35,11 @@ export default class TravelPicker extends React.Component<{}, TravelPickerState>
   }
 
 
-  setTravel(travel) {
-    // TODO
+  setTravel(travel, event) {
+    this.props.setSelectedTravel(travel);
+    this.setState({
+      showMenu: false,
+    });
   }
 
 
@@ -65,11 +74,12 @@ export default class TravelPicker extends React.Component<{}, TravelPickerState>
             </div>
           </div>
           <div className="layer-picker__content">
-            {travels.map(travel => {
+            {this.props.travels.map(travel => {
               let classNames = 'btn layer-picker__item';
-              if(!travel) {
+              if(travel === this.props.selectedTravel) {
                 classNames += ' selected';
               }
+
               return (
                 <div
                   key={travel.id}

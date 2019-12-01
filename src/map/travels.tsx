@@ -1,7 +1,9 @@
 import * as React from 'react';
 import materialColors from 'material-colors';
-import * as kml from './kml';
+import * as traveldata from './traveldata';
+import togpx from 'togpx';
 import { format } from 'util';
+import { GeoJsonObject } from 'geojson';
 
 const MONTHS = [
   'jan',
@@ -20,7 +22,7 @@ const MONTHS = [
 
 export class TravelType {
   public static BIKING = new TravelType('BIKING', 'fa-biking');
-  public static HIKING = new TravelType('BIKING', 'fa-shoe-prints');
+  public static HIKING = new TravelType('HIKING', 'fa-shoe-prints');
 
   readonly name: string;
   readonly icon: string;
@@ -40,7 +42,7 @@ export class Travel {
   readonly end: Date;
   readonly color: string;
   readonly types: Array<TravelType>;
-  readonly url: string;
+  readonly data: GeoJsonObject;
 
   constructor(
     id: string,
@@ -49,7 +51,7 @@ export class Travel {
     start: Date,
     end: Date,
     types: Array<TravelType>,
-    url: string,
+    data: GeoJsonObject,
   ) {
     this.id = id;
     this.name = name;
@@ -57,7 +59,24 @@ export class Travel {
     this.start = start;
     this.end = end;
     this.types = [...types];
-    this.url = url;
+    this.data = data;
+  }
+
+
+  download() {
+    let data = togpx(this.data);
+    let filename = this.name + '.gpx';
+    let mimetype = 'application/gpx+xml';
+
+    var blob = new Blob([data], { type: mimetype });
+
+    let elem = document.createElement('a');
+    elem.href = URL.createObjectURL(blob);
+    elem.download = filename;
+
+    document.body.appendChild(elem);
+    elem.click();
+    document.body.removeChild(elem);
   }
 
 
@@ -69,8 +88,8 @@ export class Travel {
     } else {
       return (
         <React.Fragment>
-          <i className="far fa-biking"       style={{ fontSize: '85%', transform: 'translate( 12%,  13%)' }}></i>
-          <i className="far fa-hiking muted" style={{ fontSize: '85%', transform: 'translate(-12%, -13%)' }}></i>
+          <i className="far fa-biking"                style={{ fontSize: '85%', transform: 'translate( 12%,  13%)' }}></i>
+          <i className="far fa-hiking secondary-icon" style={{ fontSize: '85%', transform: 'translate(-12%, -13%)' }}></i>
         </React.Fragment>
       );
     }
@@ -89,7 +108,6 @@ export class Travel {
   }
 }
 
-
 export const travels: Array<Travel> = [
   new Travel(
     'torknoeter',
@@ -98,7 +116,7 @@ export const travels: Array<Travel> = [
     new Date(2010, 4, 11),
     new Date(2010, 4, 16),
     [TravelType.BIKING],
-    kml.torknoeter,
+    traveldata.torknoeter,
   ),
   new Travel(
     'kopenhagen',
@@ -107,7 +125,7 @@ export const travels: Array<Travel> = [
     new Date(2012, 9, 3),
     new Date(2012, 4, 21),
     [TravelType.BIKING],
-    kml.kopenhagen,
+    traveldata.kopenhagen,
   ),
   new Travel(
     'marseille',
@@ -116,7 +134,7 @@ export const travels: Array<Travel> = [
     new Date(2013, 4, 1),
     new Date(2013, 4, 9),
     [TravelType.BIKING],
-    kml.marseille,
+    traveldata.marseille,
   ),
   new Travel(
     'venetie',
@@ -125,7 +143,7 @@ export const travels: Array<Travel> = [
     new Date(2013, 8, 26),
     new Date(2013, 9, 13),
     [TravelType.BIKING],
-    kml.venetie,
+    traveldata.venetie,
   ),
   new Travel(
     'italie-balkan',
@@ -134,7 +152,7 @@ export const travels: Array<Travel> = [
     new Date(2014, 2, 10),
     new Date(2014, 8, 10),
     [TravelType.BIKING],
-    kml.italieBalkan,
+    traveldata.italieBalkan,
   ),
   new Travel(
     'rome',
@@ -143,7 +161,7 @@ export const travels: Array<Travel> = [
     new Date(2015, 4, 3),
     new Date(2015, 4, 20),
     [TravelType.BIKING],
-    kml.rome,
+    traveldata.rome,
   ),
   new Travel(
     'schotland',
@@ -152,7 +170,7 @@ export const travels: Array<Travel> = [
     new Date(2016, 6, 2),
     new Date(2016, 6, 20),
     [TravelType.BIKING],
-    kml.schotland,
+    traveldata.schotland,
   ),
   new Travel(
     'roemenie',
@@ -161,7 +179,7 @@ export const travels: Array<Travel> = [
     new Date(2017, 8, 12),
     new Date(2017, 9, 2),
     [TravelType.BIKING],
-    kml.roemenie,
+    traveldata.roemenie,
   ),
   new Travel(
     'portugal',
@@ -170,7 +188,7 @@ export const travels: Array<Travel> = [
     new Date(2018, 5, 25),
     new Date(2018, 6, 16),
     [TravelType.HIKING],
-    kml.portugal,
+    traveldata.portugal,
   ),
   new Travel(
     'pyreneeen',
@@ -179,7 +197,7 @@ export const travels: Array<Travel> = [
     new Date(2018, 9, 13),
     new Date(2018, 9, 22),
     [TravelType.HIKING],
-    kml.pyreneeen,
+    traveldata.pyreneeen,
   ),
   new Travel(
     'noord-spanje',
@@ -188,7 +206,7 @@ export const travels: Array<Travel> = [
     new Date(2019, 6, 13),
     new Date(2019, 7, 8),
     [TravelType.BIKING, TravelType.HIKING],
-    kml.noordSpanje,
+    traveldata.noordSpanje,
   ),
   new Travel(
     'mercantour',
@@ -196,7 +214,7 @@ export const travels: Array<Travel> = [
     materialColors.brown['600'],
     new Date(2019, 8, 6),
     new Date(2019, 8, 13),
-    [TravelType.BIKING],
-    kml.mercantour,
+    [TravelType.HIKING],
+    traveldata.mercantour,
   ),
 ];

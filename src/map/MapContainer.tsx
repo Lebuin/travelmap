@@ -1,9 +1,12 @@
 import * as React from 'react';
-import { Map as LeafletMap, TileLayer } from 'react-leaflet';
+import { Map as LeafletMap, TileLayer, GeoJSON, FeatureGroup } from 'react-leaflet';
 import ZoomButtons from './ZoomButtons';
 import tileProviders, { TileProvider } from './tileProviders';
 import LayerPicker from './LayerPicker';
 import TravelPicker from './TravelPicker';
+import { Travel, travels, TravelType } from './travels';
+import materialColors from 'material-colors';
+import SelectedTravel from './SelectedTravel';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -17,26 +20,49 @@ interface MapContainerState {
   lon: number;
   zoomLevel: number;
   tileProvider: TileProvider,
+  travels: Array<Travel>,
+  selectedTravel: Travel,
 }
 
 
 export default class MapContainer extends React.Component<{}, MapContainerState> {
+  private map: LeafletMap;
+  private travelLayers: FeatureGroup;
+  private travelLayer: { [key: string]: FeatureGroup } = {};
+
   constructor(props: {}) {
     super(props);
     this._bind();
 
     this.state = {
-      lat: 50.6,
-      lon: 4.3,
-      zoomLevel: 9,
+      lat: 0,
+      lon: 0,
+      zoomLevel: 10,
       tileProvider: tileProviders[0],
+      travels: travels,
+      selectedTravel: null,
     };
   }
 
   _bind() {
+    this.bindMap = this.bindMap.bind(this);
+    this.bindTravelLayers = this.bindTravelLayers.bind(this);
     this.setZoomLevel = this.setZoomLevel.bind(this);
     this.onLeafletZoomLevel = this.onLeafletZoomLevel.bind(this);
     this.setTileProvider = this.setTileProvider.bind(this);
+    this.setSelectedTravel = this.setSelectedTravel.bind(this);
+  }
+
+
+  bindMap(map: any) {
+    this.map = map;
+  }
+  bindTravelLayers(layer: any) {
+    this.travelLayers = layer;
+    this.map.leafletElement.fitBounds(this.travelLayers.leafletElement.getBounds());
+  }
+  bindTravelLayer(travel: Travel, layer: any) {
+    this.travelLayer[travel.id] = layer;
   }
 
 
@@ -58,10 +84,42 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   }
 
 
+
+  getTravelStyle(travel: Travel, feature) {
+    let style: any = {
+      color: travel.color,
+      opacity: this.state.selectedTravel && this.state.selectedTravel !== travel ? .5 : 1,
+    };
+
+    let type: TravelType = travel.types[0];
+    if(feature.properties && feature.properties.type) {
+      type = feature.properties.type === 'hiking' ? TravelType.HIKING : TravelType.BIKING;
+    }
+    if(type === TravelType.HIKING) {
+      style.weight = 6;
+      style.dashArray = '0,8';
+    } else {
+      style.weight = 4;
+    }
+
+    return style;
+  }
+
+  setSelectedTravel(travel?: Travel) {
+    this.setState({
+      selectedTravel: travel,
+    });
+    if(travel) {
+      this.map.leafletElement.fitBounds(this.travelLayer[travel.id].leafletElement.getBounds());
+    }
+  }
+
+
   public render() {
     return (
       <React.Fragment>
         <LeafletMap
+          ref={this.bindMap}
           center={[this.state.lat, this.state.lon]}
           zoom={this.state.zoomLevel}
           minZoom={MIN_ZOOM_LEVEL}
@@ -73,15 +131,35 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
             attribution={this.state.tileProvider.attribution}
             url={this.state.tileProvider.url}
           />
+          <FeatureGroup ref={this.bindTravelLayers}>
+            {this.state.travels.map(travel => {
+              return <GeoJSON
+                key={travel.id}
+                data={travel.data}
+                style={this.getTravelStyle.bind(this, travel)}
+                onClick={this.setSelectedTravel.bind(this, travel)}
+                ref={this.bindTravelLayer.bind(this, travel)}
+              />
+            })}
+          </FeatureGroup>
         </LeafletMap>
+
+        <SelectedTravel
+          selectedTravel={this.state.selectedTravel}
+          setSelectedTravel={this.setSelectedTravel}
+        ></SelectedTravel>
 
         <div className="picker-btns">
           <LayerPicker
             tileProvider={this.state.tileProvider}
             setTileProvider={this.setTileProvider}
-          ></LayerPicker>
+          />
 
-          <TravelPicker></TravelPicker>
+          <TravelPicker
+            travels={this.state.travels}
+            selectedTravel={this.state.selectedTravel}
+            setSelectedTravel={this.setSelectedTravel}
+          />
         </div>
 
         <ZoomButtons
@@ -89,7 +167,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           minZoomLevel={MIN_ZOOM_LEVEL}
           maxZoomLevel={MAX_ZOOM_LEVEL}
           onZoomLevelChange={this.setZoomLevel}
-        ></ZoomButtons>
+        />
       </React.Fragment>
     );
   }
