@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Travel } from './travels';
+import Travel from './Travel';
 
 
 interface TravelPickerProps {

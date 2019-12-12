@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Travel } from './travels';
+import Travel from './Travel';
+import ElevationMap from './ElevationMap';
 
 
 interface SelectedTravelProps {
-  selectedTravel: Travel,
+  travel: Travel,
   setSelectedTravel(travel?: Travel): any,
 };
 
@@ -20,7 +21,7 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
   }
 
   fitBounds() {
-    this.props.setSelectedTravel(this.props.selectedTravel);
+    this.props.setSelectedTravel(this.props.travel);
   }
 
   exit() {
@@ -28,12 +29,12 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
   }
 
   download() {
-    this.props.selectedTravel.download();
+    this.props.travel.download();
   }
 
 
   render() {
-    if(!this.props.selectedTravel) {
+    if(!this.props.travel) {
       return null;
     }
 
@@ -41,16 +42,17 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
       <div className="selected-travel">
         <div
           className="selected-travel__border"
-          style={{ background: this.props.selectedTravel.color }}
+          style={{ background: this.props.travel.color }}
         ></div>
         <div className="selected-travel__body">
+          <ElevationMap travel={this.props.travel}></ElevationMap>
           <div className="selected-travel__icon">
-            {this.props.selectedTravel.renderIcon()}
+            {this.props.travel.renderIcon()}
           </div>
           <div className="selected-travel__content">
-            <div className="selected-travel__name">{this.props.selectedTravel.name}</div>
+            <div className="selected-travel__name">{this.props.travel.name}</div>
             <div className="selected-travel__info">
-              {this.props.selectedTravel.renderDateRange()}
+              {this.props.travel.renderDateRange()}
             </div>
           </div>
 

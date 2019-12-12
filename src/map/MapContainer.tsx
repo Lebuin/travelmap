@@ -5,7 +5,8 @@ import ZoomButtons from './ZoomButtons';
 import tileProviders, { TileProvider } from './tileProviders';
 import LayerPicker from './LayerPicker';
 import TravelPicker from './TravelPicker';
-import { Travel, travels, TravelType } from './travels';
+import travels from './travels';
+import { default as Travel, TravelType } from './Travel';
 import materialColors from 'material-colors';
 import SelectedTravel from './SelectedTravel';
 
@@ -159,7 +160,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
         </LeafletMap>
 
         <SelectedTravel
-          selectedTravel={this.state.selectedTravel}
+          travel={this.state.selectedTravel}
           setSelectedTravel={this.setSelectedTravel}
         ></SelectedTravel>
 
