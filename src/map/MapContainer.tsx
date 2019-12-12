@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Map as LeafletMap, TileLayer, GeoJSON, FeatureGroup } from 'react-leaflet';
+import * as geojson from 'geojson';
 import ZoomButtons from './ZoomButtons';
 import tileProviders, { TileProvider } from './tileProviders';
 import LayerPicker from './LayerPicker';
@@ -85,7 +86,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
 
 
-  getTravelStyle(travel: Travel, feature) {
+  getTravelStyle(travel: Travel, feature: geojson.Feature) {
     let style: any = {
       color: travel.color,
       opacity: this.state.selectedTravel && this.state.selectedTravel !== travel ? .5 : 1,
@@ -103,6 +104,12 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     }
 
     return style;
+  }
+  getTouchHelperStyle(travel: Travel, feature: geojson.Feature) {
+    return {
+      opacity: 0,
+      weight: 15,
+    };
   }
 
   setSelectedTravel(travel?: Travel) {
@@ -133,13 +140,20 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           />
           <FeatureGroup ref={this.bindTravelLayers}>
             {this.state.travels.map(travel => {
-              return <GeoJSON
-                key={travel.id}
-                data={travel.data}
-                style={this.getTravelStyle.bind(this, travel)}
-                onClick={this.setSelectedTravel.bind(this, travel)}
-                ref={this.bindTravelLayer.bind(this, travel)}
-              />
+              return (
+                <React.Fragment key={travel.id}>
+                  <GeoJSON
+                    data={travel.data}
+                    style={this.getTravelStyle.bind(this, travel)}
+                    ref={this.bindTravelLayer.bind(this, travel)}
+                  />
+                  <GeoJSON
+                    data={travel.data}
+                    style={this.getTouchHelperStyle.bind(this, travel)}
+                    onClick={this.setSelectedTravel.bind(this, travel)}
+                  />
+                </React.Fragment>
+              );
             })}
           </FeatureGroup>
         </LeafletMap>
