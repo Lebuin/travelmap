@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "jsx": "react",
     "sourceMap": true,
     "module": "es6",
     "moduleResolution": "node",
@@ -10,6 +9,7 @@
     "lib": [
       "es2016",
       "dom"
-    ]
+    ],
+    "jsx": "react"
   }
 }

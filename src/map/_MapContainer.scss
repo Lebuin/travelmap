@@ -39,40 +39,69 @@ $layer-picker-padding-left: 10px;
 
 
 .layer-picker {
-  &__wrapper {
+  &__overlay {
     position: fixed;
     z-index: 100;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-
-    display: flex;
-  }
-
-  &__overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
     background: rgba(black, .2);
+
+    display: none;
+    opacity: 0;
+    &.animate-enter,
+    &.animate-enter-done,
+    &.animate-exit {
+      display: flex;
+    }
+    &.animate-enter {
+      transition: opacity 500ms;
+    }
+    &.animate-enter-active,
+    &.animate-enter-done {
+      opacity: 1;
+    }
+    &.animate-exit {
+      transition: opacity 300ms;
+    }
   }
 
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
 
-  @include media-breakpoint-up(sm) {
-    width: 300px;
+  &__box {
+    position: fixed;
+    z-index: 101;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    @include media-breakpoint-up(sm) {
+      width: 300px;
+    }
+
+    display: none;
+    flex-direction: column;
+
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+    transform: translateX(-110%);
+
+    &.animate-enter,
+    &.animate-enter-done,
+    &.animate-exit {
+      display: flex;
+    }
+    &.animate-enter {
+      transition: transform 300ms;
+    }
+    &.animate-enter-active,
+    &.animate-enter-done {
+      transform: none;
+    }
+    &.animate-exit {
+      transition: transform 200ms;
+    }
   }
-
-  display: flex;
-  flex-direction: column;
-
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
 
   &__header {
     display: flex;
@@ -158,6 +187,11 @@ $layer-picker-padding-left: 10px;
     position: relative;
     display: flex;
     padding: 4px;
+
+    @include media-breakpoint-up(md) {
+      padding-top: 10px;
+      padding-bottom: 30px;
+    }
   }
 
   &__elevation-map-wrapper {

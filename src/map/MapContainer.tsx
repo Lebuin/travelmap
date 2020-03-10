@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { Map as LeafletMap, TileLayer, GeoJSON, FeatureGroup } from 'react-leaflet';
 import * as geojson from 'geojson';
-import ZoomButtons from './ZoomButtons';
-import tileProviders, { TileProvider } from './tileProviders';
+import * as React from 'react';
+import { FeatureGroup, GeoJSON, Map as LeafletMap, TileLayer } from 'react-leaflet';
 import LayerPicker from './LayerPicker';
+import SelectedTravel from './SelectedTravel';
+import tileProviders, { TileProvider } from './tileProviders';
+import { default as Travel, TravelType } from './Travel';
 import TravelPicker from './TravelPicker';
 import travels from './travels';
-import { default as Travel, TravelType } from './Travel';
-import materialColors from 'material-colors';
-import SelectedTravel from './SelectedTravel';
+import ZoomButtons from './ZoomButtons';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -118,6 +117,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       selectedTravel: travel,
     });
     if(travel) {
+      this.map.leafletElement.invalidateSize();
       this.map.leafletElement.fitBounds(this.travelLayer[travel.id].leafletElement.getBounds());
     }
   }
