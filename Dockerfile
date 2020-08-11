@@ -6,6 +6,6 @@ RUN npm install
 
 COPY ./webpack.config.js ./tsconfig.json /code/
 
-EXPOSE 80
+EXPOSE 443
 
 CMD npm start
