@@ -4,9 +4,9 @@ services:
     build: ./
     volumes:
         - ./src:/code/src
-    # This should be enabled during local development
-    # ports:
-    #   - "80:80"
+    ports:
+      # During local development, this should be changed to 80:80
+      - "8080:80"
     environment:
       - VIRTUAL_HOST=travels.seppe.dev
       - LETSENCRYPT_HOST=travels.seppe.dev
