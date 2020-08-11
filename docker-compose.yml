@@ -5,7 +5,7 @@ services:
     volumes:
         - ./src:/code/src
     ports:
-      - "8080:8080"
+      - "80:80"
     environment:
       - VIRTUAL_HOST=travels.seppe.dev
       - LETSENCRYPT_HOST=travels.seppe.dev
