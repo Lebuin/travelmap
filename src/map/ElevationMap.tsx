@@ -106,7 +106,7 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
         (coordinate[1] - maxHeight) / (minHeight - maxHeight) * height
       ))
       .join('L')
-      + format('V%sH0z', maxHeight)
+      + format('V%sH0z', height)
 
     return (
       <path

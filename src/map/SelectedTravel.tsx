@@ -20,6 +20,10 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
     this.download = this.download.bind(this);
   }
 
+  openImages() {
+
+  }
+
   fitBounds() {
     this.props.setSelectedTravel(this.props.travel);
   }
@@ -56,6 +60,9 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
             </div>
           </div>
 
+          <div className="btn btn--round" onClick={this.openImages}>
+            <i className="far fa-images"></i>
+          </div>
           <div className="btn btn--round" onClick={this.fitBounds}>
             <i className="far fa-map-marked"></i>
           </div>

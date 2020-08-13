@@ -8,6 +8,6 @@ services:
     # ports:
     #   - "80:443"
     environment:
-      - VIRTUAL_HOST=travels.seppe.dev
-      - LETSENCRYPT_HOST=travels.seppe.dev
+      - VIRTUAL_HOST=travels.lenders.dev
+      - LETSENCRYPT_HOST=travels.lenders.dev
     network_mode: bridge
