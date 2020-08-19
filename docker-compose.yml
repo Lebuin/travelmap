@@ -2,6 +2,7 @@ version: "3.1"
 services:
   node:
     build: ./
+    restart: always
     volumes:
         - ./src:/code/src
     # Enable this during local development
@@ -10,4 +11,11 @@ services:
     environment:
       - VIRTUAL_HOST=travels.lenders.dev
       - LETSENCRYPT_HOST=travels.lenders.dev
-    network_mode: bridge
+    networks:
+      - reverse-proxy
+
+
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy_external
