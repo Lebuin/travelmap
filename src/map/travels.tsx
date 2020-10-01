@@ -113,5 +113,14 @@ const travels: Array<Travel> = [
     [TravelType.HIKING],
     traveldata.mercantour,
   ),
+  new Travel(
+    'sardinie',
+    'Sardinië',
+    materialColors.brown['600'],
+    new Date(2020, 9, 1),
+    new Date(2020, 9, 22),
+    [TravelType.HIKING],
+    traveldata.sardinie,
+  ),
 ];
 export default travels;

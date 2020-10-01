@@ -17,5 +17,6 @@ services:
 
 networks:
   reverse-proxy:
+    # Disable this during local development
     external:
       name: reverse-proxy_external

@@ -15,7 +15,7 @@ export interface TileProvider {
 const tileProviders: Array<TileProvider> = [
   {
     name: 'Mapbox',
-    url: 'https://api.tiles.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=' + MAPBOX_ACCESS_TOKEN,
+    url: 'https://a.tiles.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}?access_token=' + MAPBOX_ACCESS_TOKEN,
     attribution: [OSM_ATTRIBUTION, MAPBOX_ATTRIBUTION].join(' '),
   },
   {
