@@ -1,6 +1,7 @@
 import * as geojson from 'geojson';
 import * as React from 'react';
 import { FeatureGroup, GeoJSON, Map as LeafletMap, TileLayer } from 'react-leaflet';
+import { Map as RawLeafletMap } from 'leaflet';
 import LayerPicker from './LayerPicker';
 import SelectedTravel from './SelectedTravel';
 import tileProviders, { TileProvider } from './tileProviders';
@@ -67,15 +68,22 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     this.travelLayer[travel.id] = layer;
   }
 
+  get leaflet(): RawLeafletMap {
+    return this.map.leafletElement;
+  }
 
-  setZoomLevel(zoomLevel: number) {
+
+  setZoomLevel(zoomLevel: number, updateLeaflet = true) {
     this.setState({
       zoomLevel: zoomLevel,
     });
+    if(updateLeaflet) {
+      this.leaflet.setZoom(zoomLevel);
+    }
   }
 
   onLeafletZoomLevel(event) {
-    // this.setZoomLevel(event.target._zoom);
+    this.setZoomLevel(event.target._zoom, false);
   }
 
 
@@ -130,9 +138,9 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
         <LeafletMap
           ref={this.bindMap}
           center={[this.state.lat, this.state.lon]}
-          zoom={this.state.zoomLevel}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
+          zoomSnap={0.1}
           zoomControl={false}
           scrollWheelZoom={false}
           onZoomEnd={this.onLeafletZoomLevel}
