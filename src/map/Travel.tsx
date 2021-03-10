@@ -9,6 +9,7 @@ const MONTHS = [
   'feb',
   'mar',
   'apr',
+  'may',
   'jun',
   'jul',
   'aug',
@@ -98,10 +99,10 @@ export default class Travel {
     return format(
       '%s %s%s – %s %s %s',
       this.start.getDate(),
-      MONTHS[this.start.getMonth()],
+      MONTHS[this.start.getMonth() - 1],
       this.start.getFullYear() === this.end.getFullYear() ? '' : ' ' + this.start.getFullYear(),
       this.end.getDate(),
-      MONTHS[this.end.getMonth()],
+      MONTHS[this.end.getMonth() - 1],
       this.end.getFullYear(),
     );
   }

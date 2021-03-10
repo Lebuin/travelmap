@@ -130,11 +130,13 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       selectedTravel: travel,
     });
     if(travel) {
-      this.map.leafletElement.invalidateSize();
-      this.map.leafletElement.flyToBounds(
-        this.travelLayer[travel.id].leafletElement.getBounds(),
-        this.fitBoundsOptions,
-      );
+      setTimeout(() => {
+        this.map.leafletElement.invalidateSize();
+        this.map.leafletElement.flyToBounds(
+          this.travelLayer[travel.id].leafletElement.getBounds(),
+          this.fitBoundsOptions,
+        );
+      });
     }
   }
 

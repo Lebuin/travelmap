@@ -12,6 +12,7 @@ import portugal from './portugal.json';
 import pyreneeen from './pyreneeen.json';
 import noordSpanje from './noord-spanje.json';
 import mercantour from './mercantour.json';
+import vercors from './vercors.json';
 import sardinie from './sardinie.json';
 
 export {
@@ -27,5 +28,6 @@ export {
   pyreneeen,
   noordSpanje,
   mercantour,
+  vercors,
   sardinie,
 };
