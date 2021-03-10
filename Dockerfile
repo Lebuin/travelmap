@@ -1,11 +1,19 @@
-FROM node:8-alpine
+FROM node:15-alpine
 
-WORKDIR /code
-COPY ./package.json ./package-lock.json ./.npmrc /code/
-RUN npm install
 
-COPY ./webpack.config.js ./tsconfig.json /code/
+RUN mkdir /opt/travelmap
+WORKDIR /opt/travelmap
+COPY ./package.json ./package-lock.json ./.npmrc /opt/travelmap/
+RUN apk add --virtual .build-deps \
+    python \
+    make \
+    g++ \
+  && npm install \
+  && apk del .build-deps
 
-EXPOSE 443
+COPY ./webpack.config.js ./tsconfig.json /opt/travelmap/
+COPY src /opt/travelmap/src
 
-CMD npm start
+EXPOSE 80
+
+CMD ["npm", "start"]
