@@ -6,8 +6,8 @@ services:
     volumes:
         - ./src:/opt/travelmap/src
     # Enable this during local development
-    ports:
-      - "80:80"
+    # ports:
+    #   - "80:80"
     environment:
       - VIRTUAL_HOST=travels.lenders.dev
       - LETSENCRYPT_HOST=travels.lenders.dev
@@ -18,5 +18,5 @@ services:
 networks:
   reverse-proxy:
     # Disable this during local development
-    # external:
-    #   name: reverse-proxy_external
+    external:
+      name: reverse-proxy_external
