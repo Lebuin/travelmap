@@ -8,6 +8,7 @@ import { default as Travel, TravelType } from './Travel';
 import TravelPicker from './TravelPicker';
 import travels from './travels';
 import ZoomButtons from './ZoomButtons';
+import './lib/SmoothWeelZoom';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -74,7 +75,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   }
 
   onLeafletZoomLevel(event) {
-    this.setZoomLevel(event.target._zoom);
+    // this.setZoomLevel(event.target._zoom);
   }
 
 
@@ -133,6 +134,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
           zoomControl={false}
+          scrollWheelZoom={false}
           onZoomEnd={this.onLeafletZoomLevel}
         >
           <TileLayer
