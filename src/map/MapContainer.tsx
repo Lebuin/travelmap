@@ -1,7 +1,7 @@
 import * as geojson from 'geojson';
 import * as React from 'react';
 import { FeatureGroup, GeoJSON, Map as LeafletMap, TileLayer } from 'react-leaflet';
-import { Map as RawLeafletMap } from 'leaflet';
+import * as L from 'leaflet';
 import LayerPicker from './LayerPicker';
 import SelectedTravel from './SelectedTravel';
 import tileProviders, { TileProvider } from './tileProviders';
@@ -32,6 +32,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   private map: LeafletMap;
   private travelLayers: FeatureGroup;
   private travelLayer: { [key: string]: FeatureGroup } = {};
+  private fitBoundsOptions: L.FitBoundsOptions = { padding: [10, 10] };
 
   constructor(props: {}) {
     super(props);
@@ -62,13 +63,16 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   }
   bindTravelLayers(layer: any) {
     this.travelLayers = layer;
-    this.map.leafletElement.fitBounds(this.travelLayers.leafletElement.getBounds());
+    this.map.leafletElement.fitBounds(
+      this.travelLayers.leafletElement.getBounds(),
+      this.fitBoundsOptions,
+    );
   }
   bindTravelLayer(travel: Travel, layer: any) {
     this.travelLayer[travel.id] = layer;
   }
 
-  get leaflet(): RawLeafletMap {
+  get leaflet(): L.Map {
     return this.map.leafletElement;
   }
 
@@ -127,7 +131,10 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     });
     if(travel) {
       this.map.leafletElement.invalidateSize();
-      this.map.leafletElement.fitBounds(this.travelLayer[travel.id].leafletElement.getBounds());
+      this.map.leafletElement.flyToBounds(
+        this.travelLayer[travel.id].leafletElement.getBounds(),
+        this.fitBoundsOptions,
+      );
     }
   }
 
