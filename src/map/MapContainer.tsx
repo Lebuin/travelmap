@@ -30,6 +30,7 @@ interface MapContainerState {
 
 export default class MapContainer extends React.Component<{}, MapContainerState> {
   private map: LeafletMap;
+  private renderer: L.Renderer;
   private travelLayers: FeatureGroup;
   private travelLayer: { [key: string]: FeatureGroup } = {};
   private fitBoundsOptions: L.FitBoundsOptions = { padding: [10, 10] };
@@ -46,6 +47,9 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       travels: travels,
       selectedTravel: null,
     };
+    this.renderer = L.canvas({
+      tolerance: 10,
+    });
   }
 
   _bind() {
@@ -100,7 +104,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
 
   getTravelStyle(travel: Travel, feature: geojson.Feature) {
-    let style: any = {
+    let style: L.PathOptions = {
       color: travel.color,
       opacity: this.state.selectedTravel && this.state.selectedTravel !== travel ? .5 : 1,
     };
@@ -110,20 +114,16 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       type = feature.properties.type === 'hiking' ? TravelType.HIKING : TravelType.BIKING;
     }
     if(type === TravelType.HIKING) {
-      style.weight = 6;
-      style.dashArray = '0,8';
+      style.weight = 5;
+      style.lineCap = 'butt';
+      style.dashArray = '9,6';
     } else {
       style.weight = 4;
     }
 
     return style;
   }
-  getTouchHelperStyle(travel: Travel, feature: geojson.Feature) {
-    return {
-      opacity: 0,
-      weight: 15,
-    };
-  }
+
 
   setSelectedTravel(travel?: Travel) {
     this.setState({
@@ -153,6 +153,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           zoomControl={false}
           scrollWheelZoom={false}
           onZoomEnd={this.onLeafletZoomLevel}
+          renderer={this.renderer}
         >
           <TileLayer
             attribution={this.state.tileProvider.attribution}
@@ -166,10 +167,6 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
                     data={travel.data}
                     style={this.getTravelStyle.bind(this, travel)}
                     ref={this.bindTravelLayer.bind(this, travel)}
-                  />
-                  <GeoJSON
-                    data={travel.data}
-                    style={this.getTouchHelperStyle.bind(this, travel)}
                     onClick={this.setSelectedTravel.bind(this, travel)}
                   />
                 </React.Fragment>
