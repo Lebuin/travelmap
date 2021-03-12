@@ -48,6 +48,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       selectedTravel: null,
     };
     this.renderer = L.canvas({
+      padding: .3,
       tolerance: 10,
     });
   }
@@ -168,6 +169,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
                     style={this.getTravelStyle.bind(this, travel)}
                     ref={this.bindTravelLayer.bind(this, travel)}
                     onClick={this.setSelectedTravel.bind(this, travel)}
+                    interactive={travel !== this.state.selectedTravel}
                   />
                 </React.Fragment>
               );
