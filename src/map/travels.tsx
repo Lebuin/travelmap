@@ -131,5 +131,14 @@ const travels: Array<Travel> = [
     [TravelType.HIKING],
     traveldata.sardinie,
   ),
+  new Travel(
+    'firenze-scalea',
+    'Firenze - Scalea',
+    materialColors.amber['600'],
+    new Date(2021, 6, 19),
+    new Date(2021, 7, 2),
+    [TravelType.BIKING],
+    traveldata.firenzeScalea,
+  ),
 ];
 export default travels;
