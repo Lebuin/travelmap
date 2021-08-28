@@ -15,6 +15,7 @@ import mercantour from './mercantour.json';
 import vercors from './vercors.json';
 import sardinie from './sardinie.json';
 import firenzeScalea from './firenze-scalea.json';
+import cevennes from './cevennes.json';
 
 export {
   torknoeter,
@@ -31,5 +32,6 @@ export {
   mercantour,
   vercors,
   sardinie,
-  firenzeScalea
+  firenzeScalea,
+  cevennes
 };
