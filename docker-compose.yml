@@ -5,14 +5,8 @@ services:
     restart: always
     volumes:
         - ./src:/opt/travelmap/src
-    environment:
-      - VIRTUAL_HOST=travels.lenders.dev
-      - LETSENCRYPT_HOST=travels.lenders.dev
-    networks:
-      - reverse-proxy
-
-
-networks:
-  reverse-proxy:
-    external:
-      name: reverse-proxy_external
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.travelmap.rule=Host(`travels.lenders.dev`)"
+      - "traefik.http.routers.travelmap.tls=true"
+      - "traefik.http.routers.travelmap.tls.certresolver=myresolver"
