@@ -21,8 +21,14 @@ const MONTHS = [
 
 
 export class TravelType {
-  public static BIKING = new TravelType('BIKING', 'fa-biking');
-  public static HIKING = new TravelType('HIKING', 'fa-shoe-prints');
+  public static BIKING = new TravelType('biking', 'fa-biking');
+  public static HIKING = new TravelType('hiking', 'fa-shoe-prints');
+
+  public static TRAIN = new TravelType('train', '');
+  public static BUS = new TravelType('bus', '');
+  public static FERRY = new TravelType('ferry', '');
+  public static HITCHHIKING = new TravelType('hitchhiking', '');
+  public static UNKNOWN = new TravelType('unknown', '');
 
   readonly name: string;
   readonly icon: string;
@@ -30,6 +36,25 @@ export class TravelType {
   private constructor(name: string, icon: string) {
     this.name = name;
     this.icon = icon;
+  }
+
+  static parse(s: string): TravelType {
+    switch(s) {
+      case 'biking':
+        return TravelType.BIKING;
+      case 'hiking':
+        return TravelType.HIKING;
+      case 'train':
+        return TravelType.TRAIN;
+      case 'bus':
+        return TravelType.BUS;
+      case 'ferry':
+        return TravelType.FERRY;
+      case 'hitchhiking':
+        return TravelType.HITCHHIKING;
+      default:
+        return TravelType.UNKNOWN;
+    }
   }
 };
 

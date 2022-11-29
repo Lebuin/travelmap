@@ -112,14 +112,17 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
     let type: TravelType = travel.types[0];
     if(feature.properties && feature.properties.type) {
-      type = feature.properties.type === 'hiking' ? TravelType.HIKING : TravelType.BIKING;
+      type = TravelType.parse(feature.properties.type);
     }
     if(type === TravelType.HIKING) {
       style.weight = 5;
       style.lineCap = 'butt';
       style.dashArray = '9,6';
-    } else {
+    } else if(type === TravelType.BIKING) {
       style.weight = 4;
+    } else {
+      style.weight = 2;
+      style.opacity = .6;
     }
 
     return style;
