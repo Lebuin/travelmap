@@ -149,5 +149,23 @@ const travels: Array<Travel> = [
     [TravelType.HIKING],
     traveldata.cevennes,
   ),
+  new Travel(
+    'montenegro',
+    'Montenegro',
+    materialColors.deepPurple['600'],
+    new Date(2022, 7, 25),
+    new Date(2022, 8, 14),
+    [TravelType.HIKING],
+    traveldata.montenegro,
+  ),
+  new Travel(
+    'cabo-de-gata',
+    'Cabo de Gata',
+    materialColors.red['600'],
+    new Date(2022, 11, 12),
+    new Date(2022, 11, 18),
+    [TravelType.HIKING],
+    traveldata.caboDeGata,
+  ),
 ];
 export default travels;

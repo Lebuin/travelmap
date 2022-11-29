@@ -16,6 +16,8 @@ import vercors from './vercors.json';
 import sardinie from './sardinie.json';
 import firenzeScalea from './firenze-scalea.json';
 import cevennes from './cevennes.json';
+import montenegro from './montenegro.json';
+import caboDeGata from './cabo-de-gata.json';
 
 export {
   torknoeter,
@@ -33,5 +35,7 @@ export {
   vercors,
   sardinie,
   firenzeScalea,
-  cevennes
+  cevennes,
+  montenegro,
+  caboDeGata,
 };
