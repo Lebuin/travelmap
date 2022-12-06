@@ -16,4 +16,4 @@ COPY src /opt/travelmap/src
 
 EXPOSE 80
 
-CMD ["npm", "start"]
+CMD ["npm", "start", "--", "--port", "80"]
