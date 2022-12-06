@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve",
-    "run": "webpack serve --port 80 --compress",
+    "production": "webpack serve --port 80 --compress",
     "build": "webpack"
   },
   "dependencies": {

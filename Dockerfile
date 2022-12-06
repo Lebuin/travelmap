@@ -11,9 +11,8 @@ RUN apk add --virtual .build-deps \
   && npm install \
   && apk del .build-deps
 
-COPY ./webpack.config.js ./tsconfig.json /opt/travelmap/
-COPY src /opt/travelmap/src
+COPY . /opt/travelmap
 
 EXPOSE 80
 
-CMD ["npm", "run"]
+CMD ["npm", "run", "production"]
