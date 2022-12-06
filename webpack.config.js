@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   mode: 'development',
@@ -11,15 +11,20 @@ module.exports = {
     app: './src/app.tsx',
   },
   devServer: {
-    contentBase: './dist',
     port: 8080,
     host: '0.0.0.0',
-    disableHostCheck: true,
+    allowedHosts: 'all',
     hot: true,
+
+    static: {
+      directory: path.resolve(__dirname, './dist'),
+    },
   },
 
   plugins: [
-    new CleanWebpackPlugin(['dist']),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: ['dist'],
+    }),
     new HtmlWebpackPlugin({
       title: 'Travelmap',
       template: './src/index.html',
@@ -27,7 +32,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
-    new webpack.HotModuleReplacementPlugin(),
   ],
 
   resolve: {
@@ -46,13 +50,6 @@ module.exports = {
         loader: 'file-loader',
         options: {
           name: 'assets/img/[name].[ext]',
-        },
-      },
-      {
-        test: /\.(woff2?|ttf|otf|eot)$/,
-        loader: 'file-loader',
-        options: {
-          name: 'assets/font/[name].[ext]',
         },
       },
       {
