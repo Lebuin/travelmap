@@ -1,7 +1,9 @@
+import * as geojson from 'geojson';
 import * as React from 'react';
 import togpx from 'togpx';
 import { format } from 'util';
-import { FeatureCollection, LineString } from 'geojson';
+import EventEmitter from 'eventemitter3';
+
 
 
 const MONTHS = [
@@ -61,13 +63,15 @@ export class TravelType {
 
 
 export default class Travel {
+  readonly ee = new EventEmitter();
+
   readonly id: string;
   readonly name: string;
   readonly start: Date;
   readonly end: Date;
   readonly color: string;
   readonly types: Array<TravelType>;
-  readonly data: FeatureCollection<LineString>;
+  private _data: geojson.FeatureCollection<geojson.LineString>;
 
   constructor(
     id: string,
@@ -76,7 +80,6 @@ export default class Travel {
     start: Date,
     end: Date,
     types: Array<TravelType>,
-    data: FeatureCollection<LineString>,
   ) {
     this.id = id;
     this.name = name;
@@ -84,7 +87,21 @@ export default class Travel {
     this.start = start;
     this.end = end;
     this.types = [...types];
-    this.data = data;
+
+    this._fetch();
+  }
+
+
+  async _fetch() {
+    const path = `/assets/tracks/${this.id}.json`;
+    const response = await fetch(path);
+    const data = await response.json();
+    this._data = data;
+    this.ee.emit('data', data);
+  }
+
+  get data() {
+    return this._data;
   }
 
 

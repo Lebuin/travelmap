@@ -16,6 +16,7 @@
     "bootstrap": "^4.3.1",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.2",
+    "eventemitter3": "5.0.0",
     "file-loader": "^6.2.0",
     "geolib": "^3.2.0",
     "html-webpack-plugin": "^5.5.0",

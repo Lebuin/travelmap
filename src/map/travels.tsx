@@ -1,5 +1,4 @@
 import materialColors from 'material-colors';
-import * as traveldata from './traveldata';
 import { default as Travel, TravelType } from './Travel';
 
 
@@ -12,7 +11,6 @@ const travels: Array<Travel> = [
     new Date(2010, 4, 11),
     new Date(2010, 4, 16),
     [TravelType.BIKING],
-    traveldata.torknoeter,
   ),
   new Travel(
     'kopenhagen',
@@ -21,7 +19,6 @@ const travels: Array<Travel> = [
     new Date(2012, 9, 3),
     new Date(2012, 4, 21),
     [TravelType.BIKING],
-    traveldata.kopenhagen,
   ),
   new Travel(
     'marseille',
@@ -30,7 +27,6 @@ const travels: Array<Travel> = [
     new Date(2013, 4, 1),
     new Date(2013, 4, 9),
     [TravelType.BIKING],
-    traveldata.marseille,
   ),
   new Travel(
     'venetie',
@@ -39,7 +35,6 @@ const travels: Array<Travel> = [
     new Date(2013, 8, 26),
     new Date(2013, 9, 13),
     [TravelType.BIKING],
-    traveldata.venetie,
   ),
   new Travel(
     'italie-balkan',
@@ -48,7 +43,6 @@ const travels: Array<Travel> = [
     new Date(2014, 2, 10),
     new Date(2014, 8, 10),
     [TravelType.BIKING],
-    traveldata.italieBalkan,
   ),
   new Travel(
     'rome',
@@ -57,7 +51,6 @@ const travels: Array<Travel> = [
     new Date(2015, 4, 3),
     new Date(2015, 4, 20),
     [TravelType.BIKING],
-    traveldata.rome,
   ),
   new Travel(
     'schotland',
@@ -66,7 +59,6 @@ const travels: Array<Travel> = [
     new Date(2016, 6, 2),
     new Date(2016, 6, 20),
     [TravelType.BIKING],
-    traveldata.schotland,
   ),
   new Travel(
     'roemenie',
@@ -75,7 +67,6 @@ const travels: Array<Travel> = [
     new Date(2017, 8, 12),
     new Date(2017, 9, 2),
     [TravelType.BIKING],
-    traveldata.roemenie,
   ),
   new Travel(
     'portugal',
@@ -84,7 +75,6 @@ const travels: Array<Travel> = [
     new Date(2018, 5, 25),
     new Date(2018, 6, 16),
     [TravelType.HIKING],
-    traveldata.portugal,
   ),
   new Travel(
     'pyreneeen',
@@ -93,7 +83,6 @@ const travels: Array<Travel> = [
     new Date(2018, 9, 13),
     new Date(2018, 9, 22),
     [TravelType.HIKING],
-    traveldata.pyreneeen,
   ),
   new Travel(
     'noord-spanje',
@@ -102,7 +91,6 @@ const travels: Array<Travel> = [
     new Date(2019, 6, 13),
     new Date(2019, 7, 8),
     [TravelType.BIKING, TravelType.HIKING],
-    traveldata.noordSpanje,
   ),
   new Travel(
     'mercantour',
@@ -111,7 +99,6 @@ const travels: Array<Travel> = [
     new Date(2019, 8, 6),
     new Date(2019, 8, 13),
     [TravelType.HIKING],
-    traveldata.mercantour,
   ),
   new Travel(
     'vercors',
@@ -120,7 +107,6 @@ const travels: Array<Travel> = [
     new Date(2020, 8, 2),
     new Date(2020, 8, 10),
     [TravelType.HIKING],
-    traveldata.vercors,
   ),
   new Travel(
     'sardinie',
@@ -129,7 +115,6 @@ const travels: Array<Travel> = [
     new Date(2020, 9, 1),
     new Date(2020, 9, 22),
     [TravelType.HIKING],
-    traveldata.sardinie,
   ),
   new Travel(
     'firenze-scalea',
@@ -138,7 +123,6 @@ const travels: Array<Travel> = [
     new Date(2021, 6, 19),
     new Date(2021, 7, 2),
     [TravelType.BIKING],
-    traveldata.firenzeScalea,
   ),
   new Travel(
     'cevennes',
@@ -147,7 +131,6 @@ const travels: Array<Travel> = [
     new Date(2021, 8, 21),
     new Date(2021, 8, 26),
     [TravelType.HIKING],
-    traveldata.cevennes,
   ),
   new Travel(
     'montenegro',
@@ -156,7 +139,6 @@ const travels: Array<Travel> = [
     new Date(2022, 7, 25),
     new Date(2022, 8, 14),
     [TravelType.HIKING],
-    traveldata.montenegro,
   ),
   new Travel(
     'cabo-de-gata',
@@ -165,7 +147,6 @@ const travels: Array<Travel> = [
     new Date(2022, 11, 12),
     new Date(2022, 11, 18),
     [TravelType.HIKING],
-    traveldata.caboDeGata,
   ),
 ];
 export default travels;
