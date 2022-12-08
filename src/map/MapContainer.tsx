@@ -150,8 +150,9 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
                   key={travel.id}
                   ref={this.bindTravelLayer.bind(this, travel)}
 
-                  map={this.refMap}
                   travel={travel}
+                  zoomLevel={this.state.zoomLevel}
+                  isInViewport={true}
                   isSelected={travel === this.state.selectedTravel}
                   isUnfocused={this.state.selectedTravel != null && travel != this.state.selectedTravel}
                   setSelectedTravel={this.setSelectedTravel}

@@ -1,8 +1,8 @@
 import * as geojson from 'geojson';
+import memoize from 'memoize-one';
 import * as React from 'react';
 import togpx from 'togpx';
 import { format } from 'util';
-import EventEmitter from 'eventemitter3';
 
 
 
@@ -61,17 +61,18 @@ export class TravelType {
 };
 
 
+export type TravelData = geojson.FeatureCollection<geojson.LineString>;
+export type TravelSegment = geojson.Feature<geojson.LineString>;
+
 
 export default class Travel {
-  readonly ee = new EventEmitter();
-
   readonly id: string;
   readonly name: string;
   readonly start: Date;
   readonly end: Date;
   readonly color: string;
   readonly types: Array<TravelType>;
-  private _data: geojson.FeatureCollection<geojson.LineString>;
+  private _data: { [key: number]: TravelData } = {};
 
   constructor(
     id: string,
@@ -87,26 +88,34 @@ export default class Travel {
     this.start = start;
     this.end = end;
     this.types = [...types];
-
-    this._fetch();
   }
 
 
-  async _fetch() {
-    const path = `/assets/tracks/${this.id}.json`;
+  hasData(accuracy = 0) {
+    return !!this._data[accuracy];
+  }
+
+  async getData(accuracy = 0) {
+    if(this.hasData(accuracy)) {
+      return this._data[accuracy];
+    } else {
+      return this._fetchData(accuracy);
+    }
+  }
+
+  _fetchData = memoize(async (accuracy = 0) => {
+    const path = `/assets/tracks/${accuracy}/${this.id}.json`;
     const response = await fetch(path);
     const data = await response.json();
-    this._data = data;
-    this.ee.emit('data', data);
-  }
+    this._data[accuracy] = data;
+    return data;
+  })
 
-  get data() {
-    return this._data;
-  }
 
 
   download() {
-    let data = togpx(this.data);
+    let jsonData = this.getData();
+    let data = togpx(jsonData);
     let filename = this.name + '.gpx';
     let mimetype = 'application/gpx+xml';
 

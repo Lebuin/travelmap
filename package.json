@@ -33,6 +33,7 @@
     "react-transition-group": "^4.3.0",
     "sass": "^1.49.9",
     "sass-loader": "^13.2.0",
+    "simplify-geojson": "1.0.5",
     "style-loader": "^3.3.1",
     "togpx": "^0.5.4",
     "ts-loader": "^9.4.2",

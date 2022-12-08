@@ -1,10 +1,8 @@
-import * as React from 'react';
-import Travel from './Travel';
-import { FeatureCollection, Feature, LineString, Position } from 'geojson';
 import * as geolib from 'geolib';
-import { format } from 'util';
-import materialColors from 'material-colors';
 import memoize from 'memoize-one';
+import * as React from 'react';
+import { format } from 'util';
+import Travel, { TravelData, TravelSegment } from './Travel';
 
 
 interface ElevationMapProps {
@@ -14,6 +12,7 @@ interface ElevationMapProps {
 interface ElevationMapState {
   width: number,
   height: number,
+  data: TravelData,
 };
 
 export default class ElevationMap extends React.Component<ElevationMapProps, ElevationMapState> {
@@ -24,11 +23,25 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
     this.state = {
       width: 0,
       height: 0,
+      data: null,
     };
   }
 
   _bind() {
     this.bindElem = this.bindElem.bind(this);
+  }
+
+  componentDidUpdate(prevProps: ElevationMapProps) {
+    if(this.props.travel !== prevProps.travel) {
+      this.setState({
+        data: null,
+      });
+      this.props.travel.getData().then(data => {
+        this.setState({
+          data: data,
+        });
+      })
+    }
   }
 
 
@@ -48,7 +61,12 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
 
 
   render() {
-    let path: JSX.Element = this.renderPath(this.props.travel, this.state.width, this.state.height);
+    let path: JSX.Element = this.renderPath(
+      this.props.travel,
+      this.state.data,
+      this.state.width,
+      this.state.height,
+    );
 
     let viewBox = format('0 0 %s %s', this.state.width, this.state.height);
 
@@ -69,17 +87,16 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
   }
 
 
-  renderPath = memoize((travel: Travel, width: number, height: number) => {
-    if(width <= 0 || height <= 0) {
+  renderPath = memoize((travel: Travel, data: TravelData, width: number, height: number) => {
+    if(data == null || width <= 0 || height <= 0) {
       return null;
     }
 
-    let featureCollection: FeatureCollection<LineString> = this.props.travel.data;
     let heightCoordinates = [];
     let distance = 0;
     let minHeight = 0;
     let maxHeight = -Infinity;
-    featureCollection.features.forEach((feature: Feature<LineString>) => {
+    data.features.forEach((feature: TravelSegment) => {
       let coordinates = feature.geometry.coordinates;
       for(let i = 0; i < coordinates.length; i++) {
         let coordinate = coordinates[i];

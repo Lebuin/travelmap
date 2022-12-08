@@ -1,12 +1,12 @@
-import * as geojson from 'geojson';
 import * as React from 'react';
-import { FeatureGroup, GeoJSON, Map as LeafletMap } from 'react-leaflet';
-import Travel, { TravelType } from './Travel';
+import { FeatureGroup, GeoJSON } from 'react-leaflet';
+import Travel, { TravelData, TravelSegment, TravelType } from './Travel';
 
 
 interface TravelLayerProps {
-  map: LeafletMap,
   travel: Travel,
+  zoomLevel: number,
+  isInViewport: boolean
   isSelected: boolean,
   isUnfocused: boolean,
   setSelectedTravel(travel?: Travel): any,
@@ -14,8 +14,12 @@ interface TravelLayerProps {
 
 interface TravelLayerState {
   travel: Travel,
-  isLoaded: boolean,
+  accuracy: number,
+  data: TravelData,
 }
+
+const MAX_TOLERANCE_IN_PIXELS = 2;
+const TRACK_ACCURACIES_IN_DEGREES = [0, .001, .01];
 
 
 export default class TravelLayer extends React.Component<TravelLayerProps, TravelLayerState> {
@@ -27,34 +31,41 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
 
     this.state = {
       travel: this.props.travel,
-      isLoaded: this.props.travel.data != null,
+      accuracy: 0,
+      data: null,
     };
-
-    this.state.travel.ee.on('data', this._onData);
   }
 
   _bind() {
-    this._onData = this._onData.bind(this);
     this.getStyle = this.getStyle.bind(this);
     this.bindLayer = this.bindLayer.bind(this);
   }
 
 
-  _onData() {
-    this.setState({
-      isLoaded: this.state.travel.data != null,
-    });
+  componentDidUpdate() {
+    if(this.props.isInViewport) {
+      let accuracy = this.getAccuracy(this.props.zoomLevel);
+      if(accuracy !== this.state.accuracy) {
+        this.props.travel.getData(accuracy).then(data => {
+          this.setState({
+            accuracy: accuracy,
+            data: data,
+          });
+        })
+      }
+    }
   }
 
 
   render() {
-    if(!this.state.isLoaded) {
+    if(this.state.data == null) {
       return (null);
     }
 
     return (
       <GeoJSON
-        data={this.state.travel.data}
+        key={this.state.accuracy}
+        data={this.state.data}
         style={this.getStyle}
         ref={this.bindLayer}
         onClick={() => this.props.setSelectedTravel(this.state.travel)}
@@ -69,15 +80,15 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
   }
 
 
-  getStyle(feature: geojson.Feature) {
+  getStyle(segment: TravelSegment) {
     let style: L.PathOptions = {
       color: this.state.travel.color,
       opacity: this.props.isUnfocused ? .5 : 1,
     };
 
     let type: TravelType = this.state.travel.types[0];
-    if(feature.properties && feature.properties.type) {
-      type = TravelType.parse(feature.properties.type);
+    if(segment.properties && segment.properties.type) {
+      type = TravelType.parse(segment.properties.type);
     }
     if(type === TravelType.HIKING) {
       style.weight = 5;
@@ -96,5 +107,21 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
 
   getBounds() {
     return this.layer.leafletElement.getBounds();
+  }
+
+
+  getAccuracy(zoomLevel: number) {
+    let pixelSizeInDegrees = this.getPixelSizeInDegrees(zoomLevel);
+    let desiredAccuracy = MAX_TOLERANCE_IN_PIXELS * pixelSizeInDegrees;
+    return TRACK_ACCURACIES_IN_DEGREES
+      .slice()
+      .reverse()
+      .find(accuracy => accuracy < desiredAccuracy);
+  }
+
+  getPixelSizeInDegrees(zoomLevel: number) {
+    let earthWidthPixels = 256 * Math.pow(2, zoomLevel);
+    let earthWidthDegrees = 360;
+    return earthWidthDegrees / earthWidthPixels;
   }
 }
