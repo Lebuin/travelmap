@@ -2,7 +2,7 @@ import * as geolib from 'geolib';
 import memoize from 'memoize-one';
 import * as React from 'react';
 import { format } from 'util';
-import Travel, { TravelData, TravelSegment } from './Travel';
+import Travel, { TravelData, TravelSegment, TravelType } from '../travels/Travel';
 
 
 interface ElevationMapProps {
@@ -104,24 +104,36 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
     let distance = 0;
     let minHeight = 0;
     let maxHeight = -Infinity;
-    data.features.forEach((feature: TravelSegment) => {
-      let coordinates = feature.geometry.coordinates;
-      for(let i = 0; i < coordinates.length; i++) {
-        let coordinate = coordinates[i];
-        if(i > 0) {
-          let prevCoordinate = coordinates[i - 1];
-          distance += geolib.getDistance(
-            [prevCoordinate[0], prevCoordinate[1]],
-            [coordinate[0], coordinate[1]],
-          );
-        }
 
-        let height = coordinate[2];
-        heightCoordinates.push([distance, height]);
-        minHeight = Math.max(0, Math.min(minHeight, height));
-        maxHeight = Math.max(maxHeight, height);
-      }
-    });
+    data.features
+
+      .filter((feature: TravelSegment) => {
+        const typeStr = feature.properties?.type;
+        if(typeStr == null) {
+          return true;
+        }
+        const type = TravelType.parse(typeStr);
+        return type === TravelType.BIKING || type === TravelType.HIKING;
+      })
+
+      .forEach((feature: TravelSegment) => {
+        let coordinates = feature.geometry.coordinates;
+        for(let i = 0; i < coordinates.length; i++) {
+          let coordinate = coordinates[i];
+          if(i > 0) {
+            let prevCoordinate = coordinates[i - 1];
+            distance += geolib.getDistance(
+              [prevCoordinate[0], prevCoordinate[1]],
+              [coordinate[0], coordinate[1]],
+            );
+          }
+
+          let height = coordinate[2];
+          heightCoordinates.push([distance, height]);
+          minHeight = Math.max(0, Math.min(minHeight, height));
+          maxHeight = Math.max(maxHeight, height);
+        }
+      });
 
 
     let path = 'M' + heightCoordinates

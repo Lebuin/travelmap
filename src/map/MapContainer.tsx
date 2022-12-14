@@ -3,39 +3,40 @@ import memoizeOne from 'memoize-one';
 import * as React from 'react';
 import { FeatureGroup, Map as LeafletMap, TileLayer, Viewport } from 'react-leaflet';
 import LayerPicker from './LayerPicker';
-import './lib/SmoothWeelZoom';
+import debounce from '../lib/debounce';
+import '../lib/SmoothWeelZoom';
 import SelectedTravel from './SelectedTravel';
 import tileProviders, { TileProvider } from './tileProviders';
-import { default as Travel } from './Travel';
 import TravelLayer from './TravelLayer';
 import TravelPicker from './TravelPicker';
-import travels from './travels';
+import { default as Travel } from '../travels/Travel';
 import ZoomButtons from './ZoomButtons';
-import debounce from './lib/debounce';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
 const MAX_ZOOM_LEVEL: number = 21;
 
 
-
+interface MapContainerProps {
+  travels: Travel[],
+  selectedTravel: Travel,
+  setSelectedTravel(travel: Travel): any,
+}
 
 interface MapContainerState {
   zoomLevel: number,
   center: [number, number] | null | undefined,
   tileProvider: TileProvider,
-  travels: Array<Travel>,
-  selectedTravel: Travel,
 }
 
 
-export default class MapContainer extends React.Component<{}, MapContainerState> {
+export default class MapContainer extends React.Component<MapContainerProps, MapContainerState> {
   private refMap: LeafletMap;
   private renderer: L.Renderer;
   private refsTravelLayer: { [key: string]: TravelLayer } = {};
   private fitBoundsOptions: L.FitBoundsOptions = { padding: [30, 30] };
 
-  constructor(props: {}) {
+  constructor(props: MapContainerProps) {
     super(props);
     this._bind();
 
@@ -43,8 +44,6 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       zoomLevel: 10,
       center: null,
       tileProvider: tileProviders[0],
-      travels: travels,
-      selectedTravel: null,
     };
     this.renderer = L.canvas({
       padding: .3,
@@ -57,7 +56,13 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     this.setZoomLevel = this.setZoomLevel.bind(this);
     this.onLeafletViewportChange = this.onLeafletViewportChange.bind(this);
     this.setTileProvider = this.setTileProvider.bind(this);
-    this.setSelectedTravel = this.setSelectedTravel.bind(this);
+  }
+
+
+  componentDidUpdate(prevProps: MapContainerProps) {
+    if(this.props.selectedTravel && this.props.selectedTravel !== prevProps.selectedTravel) {
+      this.flyToTravel(this.props.selectedTravel);
+    }
   }
 
 
@@ -104,19 +109,14 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
 
 
-  setSelectedTravel(travel?: Travel) {
-    this.setState({
-      selectedTravel: travel,
+  flyToTravel(travel?: Travel) {
+    setTimeout(() => {
+      this.refMap.leafletElement.invalidateSize();
+      this.refMap.leafletElement.flyToBounds(
+        travel.bounds,
+        this.fitBoundsOptions,
+      );
     });
-    if(travel) {
-      setTimeout(() => {
-        this.refMap.leafletElement.invalidateSize();
-        this.refMap.leafletElement.flyToBounds(
-          travel.bounds,
-          this.fitBoundsOptions,
-        );
-      });
-    }
   }
 
 
@@ -125,14 +125,13 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       <React.Fragment>
         <LeafletMap
           ref={this.bindMap}
-          bounds={this.getBounds(this.state.travels)}
+          bounds={this.getBounds(this.props.travels)}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
           zoomSnap={0.1}
           zoomControl={false}
           scrollWheelZoom={false}
           onViewportChange={this.onLeafletViewportChange}
-          // onZoomEnd={this.onLeafletZoomLevel}
           renderer={this.renderer}
         >
           <TileLayer
@@ -140,7 +139,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
             url={this.state.tileProvider.url}
           />
           <FeatureGroup>
-            {this.state.travels.map(travel => {
+            {this.props.travels.map(travel => {
               return (
                 <TravelLayer
                   key={travel.id}
@@ -149,9 +148,9 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
                   travel={travel}
                   zoomLevel={this.state.zoomLevel}
                   isInViewport={this.isInViewport(travel)}
-                  isSelected={travel === this.state.selectedTravel}
-                  isUnfocused={this.state.selectedTravel != null && travel != this.state.selectedTravel}
-                  setSelectedTravel={this.setSelectedTravel}
+                  isSelected={travel === this.props.selectedTravel}
+                  isUnfocused={this.props.selectedTravel != null && travel != this.props.selectedTravel}
+                  setSelectedTravel={this.props.setSelectedTravel}
                 />
               );
             })}
@@ -159,8 +158,8 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
         </LeafletMap>
 
         <SelectedTravel
-          travel={this.state.selectedTravel}
-          setSelectedTravel={this.setSelectedTravel}
+          travel={this.props.selectedTravel}
+          setSelectedTravel={this.props.setSelectedTravel}
         ></SelectedTravel>
 
         <div className="picker-btns">
@@ -170,9 +169,9 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
           />
 
           <TravelPicker
-            travels={this.state.travels}
-            selectedTravel={this.state.selectedTravel}
-            setSelectedTravel={this.setSelectedTravel}
+            travels={this.props.travels}
+            selectedTravel={this.props.selectedTravel}
+            setSelectedTravel={this.props.setSelectedTravel}
           />
         </div>
 

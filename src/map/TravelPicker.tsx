@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
-import Travel from './Travel';
+import Travel from '../travels/Travel';
 
 
 interface TravelPickerProps {

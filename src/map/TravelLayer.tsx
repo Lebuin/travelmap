@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FeatureGroup, GeoJSON } from 'react-leaflet';
-import Travel, { TravelData, TravelSegment, TravelType } from './Travel';
+import Travel, { TravelData, TravelSegment, TravelType } from '../travels/Travel';
 
 
 interface TravelLayerProps {
@@ -94,7 +94,7 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
     };
 
     let type: TravelType = this.state.travel.types[0];
-    if(segment.properties && segment.properties.type) {
+    if(segment.properties?.type) {
       type = TravelType.parse(segment.properties.type);
     }
     if(type === TravelType.HIKING) {

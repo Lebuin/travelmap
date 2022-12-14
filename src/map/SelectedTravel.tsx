@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Travel from './Travel';
+import Travel from '../travels/Travel';
 import ElevationMap from './ElevationMap';
 
 
