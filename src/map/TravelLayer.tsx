@@ -42,17 +42,24 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
   }
 
 
+  componentDidMount() {
+    this.fetchData();
+  }
+
   componentDidUpdate() {
-    if(this.props.isInViewport) {
-      let accuracy = this.getAccuracy(this.props.zoomLevel);
-      if(accuracy !== this.state.accuracy) {
-        this.props.travel.getData(accuracy).then(data => {
-          this.setState({
-            accuracy: accuracy,
-            data: data,
-          });
-        })
-      }
+    this.fetchData();
+  }
+
+
+  private fetchData() {
+    let accuracy = this.getAccuracy(this.props.isInViewport, this.props.zoomLevel);
+    if(accuracy !== this.state.accuracy) {
+      this.props.travel.getData(accuracy).then(data => {
+        this.setState({
+          accuracy: accuracy,
+          data: data,
+        });
+      })
     }
   }
 
@@ -110,7 +117,11 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
   }
 
 
-  getAccuracy(zoomLevel: number) {
+  getAccuracy(isInViewport: boolean, zoomLevel: number) {
+    if(!isInViewport) {
+      return TRACK_ACCURACIES_IN_DEGREES[TRACK_ACCURACIES_IN_DEGREES.length - 1];
+    }
+
     let pixelSizeInDegrees = this.getPixelSizeInDegrees(zoomLevel);
     let desiredAccuracy = MAX_TOLERANCE_IN_PIXELS * pixelSizeInDegrees;
     return TRACK_ACCURACIES_IN_DEGREES

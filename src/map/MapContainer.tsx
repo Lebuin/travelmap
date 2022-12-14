@@ -1,16 +1,17 @@
-import * as geojson from 'geojson';
 import * as L from 'leaflet';
+import memoizeOne from 'memoize-one';
 import * as React from 'react';
-import { FeatureGroup, Map as LeafletMap, TileLayer } from 'react-leaflet';
+import { FeatureGroup, Map as LeafletMap, TileLayer, Viewport } from 'react-leaflet';
 import LayerPicker from './LayerPicker';
 import './lib/SmoothWeelZoom';
 import SelectedTravel from './SelectedTravel';
 import tileProviders, { TileProvider } from './tileProviders';
-import { default as Travel, TravelType } from './Travel';
+import { default as Travel } from './Travel';
 import TravelLayer from './TravelLayer';
 import TravelPicker from './TravelPicker';
 import travels from './travels';
 import ZoomButtons from './ZoomButtons';
+import debounce from './lib/debounce';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -20,9 +21,8 @@ const MAX_ZOOM_LEVEL: number = 21;
 
 
 interface MapContainerState {
-  lat: number;
-  lon: number;
-  zoomLevel: number;
+  zoomLevel: number,
+  center: [number, number] | null | undefined,
   tileProvider: TileProvider,
   travels: Array<Travel>,
   selectedTravel: Travel,
@@ -32,7 +32,6 @@ interface MapContainerState {
 export default class MapContainer extends React.Component<{}, MapContainerState> {
   private refMap: LeafletMap;
   private renderer: L.Renderer;
-  private refTravelLayerGroup: FeatureGroup;
   private refsTravelLayer: { [key: string]: TravelLayer } = {};
   private fitBoundsOptions: L.FitBoundsOptions = { padding: [30, 30] };
 
@@ -41,9 +40,8 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     this._bind();
 
     this.state = {
-      lat: 0,
-      lon: 0,
       zoomLevel: 10,
+      center: null,
       tileProvider: tileProviders[0],
       travels: travels,
       selectedTravel: null,
@@ -56,9 +54,8 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
   _bind() {
     this.bindMap = this.bindMap.bind(this);
-    this.bindTravelLayers = this.bindTravelLayers.bind(this);
     this.setZoomLevel = this.setZoomLevel.bind(this);
-    this.onLeafletZoomLevel = this.onLeafletZoomLevel.bind(this);
+    this.onLeafletViewportChange = this.onLeafletViewportChange.bind(this);
     this.setTileProvider = this.setTileProvider.bind(this);
     this.setSelectedTravel = this.setSelectedTravel.bind(this);
   }
@@ -67,23 +64,12 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
   bindMap(map: any) {
     this.refMap = map;
   }
-  bindTravelLayers(layer: any) {
-    this.refTravelLayerGroup = layer;
-    this.refMap.leafletElement.setView([48, 5], 5);
-    const bounds = new L.LatLngBounds(
-      { lat: 36.7, lng: -9.0 },
-      { lat: 58.2, lng: 23.7 },
-    )
-    // TODO: reinstate this when we have simplified tracks
-    // const bounds = this.refTravelLayerGroup.leafletElement.getBounds()
-    this.refMap.leafletElement.fitBounds(bounds, this.fitBoundsOptions);
-  }
   bindTravelLayer(travel: Travel, layer: any) {
     this.refsTravelLayer[travel.id] = layer;
   }
 
-  get leaflet(): L.Map {
-    return this.refMap.leafletElement;
+  get leaflet(): L.Map | undefined {
+    return this.refMap?.leafletElement;
   }
 
 
@@ -96,8 +82,17 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
     }
   }
 
-  onLeafletZoomLevel(event) {
-    this.setZoomLevel(event.target._zoom, false);
+  setViewport(viewport: Viewport) {
+    this.setState({
+      zoomLevel: viewport.zoom,
+      center: viewport.center,
+    });
+  }
+  setViewportDebounced = debounce(this.setViewport, 500);
+
+
+  onLeafletViewportChange(viewport) {
+    this.setViewportDebounced(viewport);
   }
 
 
@@ -117,7 +112,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       setTimeout(() => {
         this.refMap.leafletElement.invalidateSize();
         this.refMap.leafletElement.flyToBounds(
-          this.refsTravelLayer[travel.id].getBounds(),
+          travel.bounds,
           this.fitBoundsOptions,
         );
       });
@@ -130,20 +125,21 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
       <React.Fragment>
         <LeafletMap
           ref={this.bindMap}
-          center={[this.state.lat, this.state.lon]}
+          bounds={this.getBounds(this.state.travels)}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
           zoomSnap={0.1}
           zoomControl={false}
           scrollWheelZoom={false}
-          onZoomEnd={this.onLeafletZoomLevel}
+          onViewportChange={this.onLeafletViewportChange}
+          // onZoomEnd={this.onLeafletZoomLevel}
           renderer={this.renderer}
         >
           <TileLayer
             attribution={this.state.tileProvider.attribution}
             url={this.state.tileProvider.url}
           />
-          <FeatureGroup ref={this.bindTravelLayers}>
+          <FeatureGroup>
             {this.state.travels.map(travel => {
               return (
                 <TravelLayer
@@ -152,7 +148,7 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
 
                   travel={travel}
                   zoomLevel={this.state.zoomLevel}
-                  isInViewport={true}
+                  isInViewport={this.isInViewport(travel)}
                   isSelected={travel === this.state.selectedTravel}
                   isUnfocused={this.state.selectedTravel != null && travel != this.state.selectedTravel}
                   setSelectedTravel={this.setSelectedTravel}
@@ -188,5 +184,22 @@ export default class MapContainer extends React.Component<{}, MapContainerState>
         />
       </React.Fragment>
     );
+  }
+
+
+  private getBounds = memoizeOne((travels: Travel[]) => {
+    let bounds = new L.LatLngBounds(
+      travels[0].bounds.getSouthWest(),
+      travels[0].bounds.getNorthEast(),
+    );
+    travels.forEach(travel => {
+      bounds.extend(travel.bounds);
+    });
+    return bounds;
+  });
+
+
+  private isInViewport(travel: Travel) {
+    return !!(this.leaflet && this.leaflet.getBounds().intersects(travel.bounds));
   }
 }

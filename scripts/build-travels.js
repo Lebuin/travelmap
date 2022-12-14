@@ -61,7 +61,7 @@ function getBounds(travelId) {
   };
 
   track.features.forEach(segment => {
-    segment.geometry.coordinates.forEach(([lat, lng]) => {
+    segment.geometry.coordinates.forEach(([lng, lat]) => {
       bounds.min.lat = Math.min(bounds.min.lat, lat);
       bounds.min.lng = Math.min(bounds.min.lng, lng);
       bounds.max.lat = Math.max(bounds.max.lat, lat);
