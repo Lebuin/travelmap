@@ -1,6 +1,7 @@
 const { parse } = require('csv-parse/sync');
-const fs = require('node:fs');
+const fs = require('fs');
 const materialColors = require('material-colors');
+
 
 const PATH_TRAVEL_DEFS = 'src/assets/travels.csv';
 const PATH_TRAVELS = 'src/assets/travels.json';
