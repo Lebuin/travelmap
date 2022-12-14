@@ -2,6 +2,7 @@ import './app.scss';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import Image from './slideshow/Image';
 import { MapContainer } from './map';
 import Slideshow from './slideshow/Slideshow';
 import Travel from './travels/Travel';
@@ -11,7 +12,7 @@ import travels from './travels/travels';
 interface AppState {
   travels: Travel[],
   selectedTravel: Travel,
-  showSlideshow: boolean,
+  selectedImage: Image,
 }
 
 
@@ -23,13 +24,13 @@ class App extends React.Component<{}, AppState> {
     this.state = {
       travels: travels,
       selectedTravel: null,
-      showSlideshow: false,
+      selectedImage: null,
     };
   }
 
   _bind() {
     this.setSelectedTravel = this.setSelectedTravel.bind(this);
-    this.setShowSlideshow = this.setShowSlideshow.bind(this);
+    this.setSelectedImage = this.setSelectedImage.bind(this);
   }
 
 
@@ -39,20 +40,20 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
-  setShowSlideshow(showSlideshow: boolean) {
+  setSelectedImage(image: Image) {
     this.setState({
-      showSlideshow: showSlideshow,
+      selectedImage: image,
     });
   }
 
 
   public render() {
     let slideshow = null;
-    if(this.state.showSlideshow && this.state.selectedTravel) {
+    if(this.state.selectedImage) {
       slideshow = (
         <Slideshow
-          selectedTravel={this.state.selectedTravel}
-          setShowSlideshow={this.setShowSlideshow}
+          image={this.state.selectedImage}
+          setSelectedImage={this.setSelectedImage}
         />
       );
     }
@@ -63,7 +64,7 @@ class App extends React.Component<{}, AppState> {
           travels={this.state.travels}
           selectedTravel={this.state.selectedTravel}
           setSelectedTravel={this.setSelectedTravel}
-          setShowSlideshow={this.setShowSlideshow}
+          setSelectedImage={this.setSelectedImage}
         />
         {slideshow}
       </React.Fragment>

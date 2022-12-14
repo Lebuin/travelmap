@@ -4,6 +4,7 @@ import * as React from 'react';
 import togpx from 'togpx';
 import { format } from 'util';
 import * as L from 'leaflet';
+import Image from '../slideshow/Image';
 
 
 
@@ -71,9 +72,11 @@ export default class Travel {
   readonly name: string;
   readonly start: Date;
   readonly end: Date;
-  readonly types: Array<TravelType>;
+  readonly types: TravelType[];
   readonly color: string;
   readonly bounds: L.LatLngBounds;
+  readonly images: ReadonlyArray<Image>;
+
   private _data: { [key: number]: TravelData } = {};
 
   constructor(
@@ -84,6 +87,7 @@ export default class Travel {
     types: Array<TravelType>,
     color: string,
     bounds: L.LatLngBounds,
+    images: ReadonlyArray<Image>,
   ) {
     this.id = id;
     this.name = name;
@@ -92,6 +96,11 @@ export default class Travel {
     this.types = [...types];
     this.color = color;
     this.bounds = bounds;
+    this.images = images;
+
+    for(const image of images) {
+      image.travel = this;
+    }
   }
 
 
@@ -154,10 +163,10 @@ export default class Travel {
     return format(
       '%s %s%s – %s %s %s',
       this.start.getDate(),
-      MONTHS[this.start.getMonth() - 1],
+      MONTHS[this.start.getMonth()],
       this.start.getFullYear() === this.end.getFullYear() ? '' : ' ' + this.start.getFullYear(),
       this.end.getDate(),
-      MONTHS[this.end.getMonth() - 1],
+      MONTHS[this.end.getMonth()],
       this.end.getFullYear(),
     );
   }

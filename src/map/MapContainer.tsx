@@ -1,15 +1,16 @@
 import * as L from 'leaflet';
 import memoizeOne from 'memoize-one';
 import * as React from 'react';
-import { FeatureGroup, Map as LeafletMap, TileLayer, Viewport } from 'react-leaflet';
-import LayerPicker from './LayerPicker';
+import { FeatureGroup, Map as LeafletMap, Marker, TileLayer, Viewport } from 'react-leaflet';
+import Image from '../slideshow/Image';
 import debounce from '../lib/debounce';
 import '../lib/SmoothWeelZoom';
+import { default as Travel } from '../travels/Travel';
+import LayerPicker from './LayerPicker';
 import SelectedTravel from './SelectedTravel';
 import tileProviders, { TileProvider } from './tileProviders';
 import TravelLayer from './TravelLayer';
 import TravelPicker from './TravelPicker';
-import { default as Travel } from '../travels/Travel';
 import ZoomButtons from './ZoomButtons';
 
 
@@ -21,7 +22,7 @@ interface MapContainerProps {
   travels: Travel[],
   selectedTravel: Travel,
   setSelectedTravel(travel: Travel): any,
-  setShowSlideshow(showSlideshow: boolean): any,
+  setSelectedImage(image: Image): any,
 }
 
 interface MapContainerState {
@@ -94,7 +95,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
       center: viewport.center,
     });
   }
-  setViewportDebounced = debounce(this.setViewport, 500);
+  setViewportDebounced = debounce(this.setViewport, 100);
 
 
   onLeafletViewportChange(viewport) {
@@ -139,6 +140,9 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
             attribution={this.state.tileProvider.attribution}
             url={this.state.tileProvider.url}
           />
+
+          {this.renderMarkers(this.props.selectedTravel, this.state.zoomLevel)}
+
           <FeatureGroup>
             {this.props.travels.map(travel => {
               return (
@@ -161,7 +165,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
         <SelectedTravel
           travel={this.props.selectedTravel}
           setSelectedTravel={this.props.setSelectedTravel}
-          setShowSlideshow={this.props.setShowSlideshow}
+          setSelectedImage={this.props.setSelectedImage}
         ></SelectedTravel>
 
         <div className="picker-btns">
@@ -185,6 +189,43 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
         />
       </React.Fragment>
     );
+  }
+
+
+  private renderMarkers = memoizeOne((travel: Travel, zoomLevel: number) => {
+    if(!travel) {
+      return null;
+    }
+
+    return (
+      <FeatureGroup>
+        {travel.images
+          .filter(image => image.location)
+          .map(image => {
+            return (
+              <Marker
+                key={image.thumbnailUrl}
+                position={image.location}
+                icon={new L.Icon({
+                  iconUrl: image.thumbnailUrl,
+                  iconSize: this.getImageSize(image, zoomLevel),
+                })}
+                riseOnHover={true}
+                onclick={this.props.setSelectedImage.bind(this, image)}
+              />
+            );
+          })
+        }
+      </FeatureGroup>
+    );
+  });
+
+  private getImageSize(image: Image, zoomLevel: number): [number, number] {
+    let area = Math.pow(2, 1.5 * zoomLevel) * .12;
+    area = Math.min(10000, Math.max(500, area));
+    let height = Math.sqrt(area / image.aspectRatio);
+    let width = height * image.aspectRatio;
+    return [width, height];
   }
 
 

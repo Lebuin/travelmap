@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Image from '../slideshow/Image';
 import Travel from '../travels/Travel';
 import ElevationMap from './ElevationMap';
 
@@ -6,7 +7,7 @@ import ElevationMap from './ElevationMap';
 interface SelectedTravelProps {
   travel: Travel,
   setSelectedTravel(travel?: Travel): any,
-  setShowSlideshow(showSlideshow: boolean): any,
+  setSelectedImage(image: Image): any,
 };
 
 
@@ -24,7 +25,9 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
   }
 
   openSlideshow() {
-    this.props.setShowSlideshow(true);
+    if(this.props.travel.images.length > 0) {
+      this.props.setSelectedImage(this.props.travel.images[0]);
+    }
   }
 
   fitBounds() {
