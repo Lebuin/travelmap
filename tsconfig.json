@@ -1,15 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "sourceMap": true,
-    "module": "es6",
-    "moduleResolution": "node",
-    "rootDir": "src",
-    "outDir": "./dist/",
+    "jsx": "react",
     "lib": [
       "es2016",
       "dom"
     ],
-    "jsx": "react"
+    "module": "es6",
+    "moduleResolution": "node",
+    "outDir": "./dist/",
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "sourceMap": true,
+    "target": "es6",
   }
 }

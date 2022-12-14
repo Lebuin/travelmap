@@ -3,6 +3,7 @@ import memoize from 'memoize-one';
 import * as React from 'react';
 import togpx from 'togpx';
 import { format } from 'util';
+import * as L from 'leaflet';
 
 
 
@@ -70,24 +71,27 @@ export default class Travel {
   readonly name: string;
   readonly start: Date;
   readonly end: Date;
-  readonly color: string;
   readonly types: Array<TravelType>;
+  readonly color: string;
+  readonly bounds: L.LatLngBounds;
   private _data: { [key: number]: TravelData } = {};
 
   constructor(
     id: string,
     name: string,
-    color: string,
     start: Date,
     end: Date,
     types: Array<TravelType>,
+    color: string,
+    bounds: L.LatLngBounds,
   ) {
     this.id = id;
     this.name = name;
-    this.color = color;
     this.start = start;
     this.end = end;
     this.types = [...types];
+    this.color = color;
+    this.bounds = bounds;
   }
 
 

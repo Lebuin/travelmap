@@ -1,152 +1,17 @@
-import materialColors from 'material-colors';
+import * as L from 'leaflet';
+import * as travelDefs from '../assets/travels.json';
 import { default as Travel, TravelType } from './Travel';
 
 
-
-const travels: Array<Travel> = [
-  new Travel(
-    'torknoeter',
-    'Torgny – Knokke',
-    materialColors.red['600'],
-    new Date(2010, 4, 11),
-    new Date(2010, 4, 16),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'kopenhagen',
-    'Kopenhagen',
-    materialColors.purple['600'],
-    new Date(2012, 9, 3),
-    new Date(2012, 4, 21),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'marseille',
-    'Marseille',
-    materialColors.yellow['600'],
-    new Date(2013, 4, 1),
-    new Date(2013, 4, 9),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'venetie',
-    'Venetië',
-    materialColors.teal['600'],
-    new Date(2013, 8, 26),
-    new Date(2013, 9, 13),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'italie-balkan',
-    'Italië & Balkan',
-    materialColors.pink['600'],
-    new Date(2014, 2, 10),
-    new Date(2014, 8, 10),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'rome',
-    'Basel – Rome',
-    materialColors.lightGreen['600'],
-    new Date(2015, 4, 3),
-    new Date(2015, 4, 20),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'schotland',
-    'Schotland',
-    materialColors.deepOrange['600'],
-    new Date(2016, 6, 2),
-    new Date(2016, 6, 20),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'roemenie',
-    'Roemenië',
-    materialColors.cyan['600'],
-    new Date(2017, 8, 12),
-    new Date(2017, 9, 2),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'portugal',
-    'Portugal',
-    materialColors.orange['600'],
-    new Date(2018, 5, 25),
-    new Date(2018, 6, 16),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'pyreneeen',
-    'Pyreneeën',
-    materialColors.blue['600'],
-    new Date(2018, 9, 13),
-    new Date(2018, 9, 22),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'noord-spanje',
-    'Noord-Spanje',
-    materialColors.indigo['600'],
-    new Date(2019, 6, 13),
-    new Date(2019, 7, 8),
-    [TravelType.BIKING, TravelType.HIKING],
-  ),
-  new Travel(
-    'mercantour',
-    'Mercantour',
-    materialColors.brown['600'],
-    new Date(2019, 8, 6),
-    new Date(2019, 8, 13),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'vercors',
-    'Vercors',
-    materialColors.lime['600'],
-    new Date(2020, 8, 2),
-    new Date(2020, 8, 10),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'sardinie',
-    'Sardinië',
-    materialColors.green['600'],
-    new Date(2020, 9, 1),
-    new Date(2020, 9, 22),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'firenze-scalea',
-    'Firenze - Scalea',
-    materialColors.amber['600'],
-    new Date(2021, 6, 19),
-    new Date(2021, 7, 2),
-    [TravelType.BIKING],
-  ),
-  new Travel(
-    'cevennes',
-    'Cévennes',
-    materialColors.lightBlue['600'],
-    new Date(2021, 8, 21),
-    new Date(2021, 8, 26),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'montenegro',
-    'Montenegro',
-    materialColors.deepPurple['600'],
-    new Date(2022, 7, 25),
-    new Date(2022, 8, 14),
-    [TravelType.HIKING],
-  ),
-  new Travel(
-    'cabo-de-gata',
-    'Cabo de Gata',
-    materialColors.red['600'],
-    new Date(2022, 11, 12),
-    new Date(2022, 11, 18),
-    [TravelType.HIKING],
-  ),
-];
+const travels = Array.from(travelDefs).map(travelDef => {
+  return new Travel(
+    travelDef.id,
+    travelDef.name,
+    new Date(travelDef.startDate),
+    new Date(travelDef.endDate),
+    travelDef.types.map(TravelType.parse),
+    travelDef.color,
+    new L.LatLngBounds(travelDef.bounds.min, travelDef.bounds.max),
+  );
+});
 export default travels;

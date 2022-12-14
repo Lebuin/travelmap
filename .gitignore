@@ -1,3 +1,4 @@
 /node_modules
 /.env
-/src/map/images
+/src/assets/images
+/dist
