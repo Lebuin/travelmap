@@ -1,9 +1,10 @@
 FROM node:15-alpine
 
 EXPOSE 80
-
-# RUN mkdir /opt/travelmap
 WORKDIR /opt/travelmap
+
+RUN apk add vips-tools
+
 COPY ./package.json ./package-lock.json ./.npmrc /opt/travelmap/
 RUN apk add --virtual .build-deps \
     python \
@@ -14,7 +15,8 @@ RUN apk add --virtual .build-deps \
 
 COPY . /opt/travelmap
 
-RUN scripts/build-tracks.sh \
-  && node scripts/build-travels.js
+RUN node ./scripts/build-travels.js \
+  && ./scripts/simplify-tracks.sh \
+  && ./scripts/create-thumbnails.sh
 
 CMD ["npm", "run", "production"]
