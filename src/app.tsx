@@ -3,6 +3,7 @@ import './app.scss';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { MapContainer } from './map';
+import Slideshow from './slideshow/Slideshow';
 import Travel from './travels/Travel';
 import travels from './travels/travels';
 
@@ -10,6 +11,7 @@ import travels from './travels/travels';
 interface AppState {
   travels: Travel[],
   selectedTravel: Travel,
+  showSlideshow: boolean,
 }
 
 
@@ -21,11 +23,13 @@ class App extends React.Component<{}, AppState> {
     this.state = {
       travels: travels,
       selectedTravel: null,
+      showSlideshow: false,
     };
   }
 
   _bind() {
     this.setSelectedTravel = this.setSelectedTravel.bind(this);
+    this.setShowSlideshow = this.setShowSlideshow.bind(this);
   }
 
 
@@ -35,14 +39,34 @@ class App extends React.Component<{}, AppState> {
     });
   }
 
+  setShowSlideshow(showSlideshow: boolean) {
+    this.setState({
+      showSlideshow: showSlideshow,
+    });
+  }
+
 
   public render() {
+    let slideshow = null;
+    if(this.state.showSlideshow && this.state.selectedTravel) {
+      slideshow = (
+        <Slideshow
+          selectedTravel={this.state.selectedTravel}
+          setShowSlideshow={this.setShowSlideshow}
+        />
+      );
+    }
+
     return (
-      <MapContainer
-        travels={this.state.travels}
-        selectedTravel={this.state.selectedTravel}
-        setSelectedTravel={this.setSelectedTravel}
-      />
+      <React.Fragment>
+        <MapContainer
+          travels={this.state.travels}
+          selectedTravel={this.state.selectedTravel}
+          setSelectedTravel={this.setSelectedTravel}
+          setShowSlideshow={this.setShowSlideshow}
+        />
+        {slideshow}
+      </React.Fragment>
     );
   }
 }

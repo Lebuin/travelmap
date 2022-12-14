@@ -6,7 +6,9 @@ import ElevationMap from './ElevationMap';
 interface SelectedTravelProps {
   travel: Travel,
   setSelectedTravel(travel?: Travel): any,
+  setShowSlideshow(showSlideshow: boolean): any,
 };
+
 
 export default class SelectedTravel extends React.Component<SelectedTravelProps, {}> {
   constructor(props: SelectedTravelProps) {
@@ -15,13 +17,14 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
   }
 
   _bind() {
+    this.openSlideshow = this.openSlideshow.bind(this);
     this.fitBounds = this.fitBounds.bind(this);
     this.exit = this.exit.bind(this);
     this.download = this.download.bind(this);
   }
 
-  openImages() {
-
+  openSlideshow() {
+    this.props.setShowSlideshow(true);
   }
 
   fitBounds() {
@@ -60,7 +63,7 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
             </div>
           </div>
 
-          <div className="btn btn--round" onClick={this.openImages}>
+          <div className="btn btn--round" onClick={this.openSlideshow}>
             <i className="far fa-images"></i>
           </div>
           <div className="btn btn--round" onClick={this.fitBounds}>

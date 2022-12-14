@@ -1,0 +1,23 @@
+.slideshow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: black;
+
+
+  &__exit {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+}
+
+
+.btn--slideshow {
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+}

@@ -21,6 +21,7 @@ interface MapContainerProps {
   travels: Travel[],
   selectedTravel: Travel,
   setSelectedTravel(travel: Travel): any,
+  setShowSlideshow(showSlideshow: boolean): any,
 }
 
 interface MapContainerState {
@@ -160,6 +161,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
         <SelectedTravel
           travel={this.props.selectedTravel}
           setSelectedTravel={this.props.setSelectedTravel}
+          setShowSlideshow={this.props.setShowSlideshow}
         ></SelectedTravel>
 
         <div className="picker-btns">

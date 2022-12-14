@@ -46,7 +46,7 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
     return (
       <React.Fragment>
         <button
-          className="btn--map layer-picker__btn"
+          className="btn btn--map"
           onClick={this.toggleMenu}
         >
           <i className="far fa-layer-group"></i>

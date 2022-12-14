@@ -31,7 +31,7 @@ h3 {
   &--round {
     width: 40px;
     height: 40px;
-    border-radius: 20px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,6 +47,19 @@ h3 {
   &.active {
     background: rgba(0, 0, 0, .1);
   }
+
+
+  &--dark {
+    color: white;
+    &:hover {
+      background: rgba(255, 255, 255, .2);
+    }
+    &:active,
+    &.active {
+      background: rgba(255, 255, 255, .3);
+    }
+  }
+
 
   &--white {
     background: white;

@@ -10,7 +10,7 @@ abstract class ZoomButton extends React.Component<ZoomButtonProps, {}> {
 
   render() {
     return <button
-      className="btn--map"
+      className="btn btn--map"
       onClick={this.props.onClick}
       disabled={this.props.disabled}
     >
