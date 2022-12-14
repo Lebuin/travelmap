@@ -31,6 +31,14 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
     this.bindElem = this.bindElem.bind(this);
   }
 
+  componentDidMount() {
+    this.props.travel.getData().then(data => {
+      this.setState({
+        data: data,
+      });
+    });
+  }
+
   componentDidUpdate(prevProps: ElevationMapProps) {
     if(this.props.travel !== prevProps.travel) {
       this.setState({
@@ -40,7 +48,7 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
         this.setState({
           data: data,
         });
-      })
+      });
     }
   }
 
