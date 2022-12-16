@@ -173,6 +173,14 @@ $layer-picker-padding-left: 10px;
 }
 
 
+.image-marker {
+  background: #313336;
+  border-radius: 50%;
+  object-fit: cover;
+  outline: #313336 solid 1px;
+}
+
+
 
 .selected-travel {
   flex: none;

@@ -48,16 +48,6 @@ class App extends React.Component<{}, AppState> {
 
 
   public render() {
-    let slideshow = null;
-    if(this.state.selectedImage) {
-      slideshow = (
-        <Slideshow
-          image={this.state.selectedImage}
-          setSelectedImage={this.setSelectedImage}
-        />
-      );
-    }
-
     return (
       <React.Fragment>
         <MapContainer
@@ -66,7 +56,11 @@ class App extends React.Component<{}, AppState> {
           setSelectedTravel={this.setSelectedTravel}
           setSelectedImage={this.setSelectedImage}
         />
-        {slideshow}
+
+        <Slideshow
+          image={this.state.selectedImage}
+          setSelectedImage={this.setSelectedImage}
+        />
       </React.Fragment>
     );
   }

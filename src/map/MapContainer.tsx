@@ -74,7 +74,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
     let locationParts = [
       this.state.center[0].toFixed(5),
       this.state.center[1].toFixed(5),
-      this.state.zoomLevel.toFixed(1),
+      this.state.zoomLevel.toFixed(2),
     ]
     let url = `?l=` + locationParts.join(',');
     window.history.pushState('', '', url);
@@ -179,7 +179,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
           viewport={viewport}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
-          zoomSnap={0.1}
+          zoomSnap={0.01}
           zoomControl={false}
           scrollWheelZoom={false}
           onViewportChange={this.onLeafletViewportChange}
@@ -190,7 +190,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
             url={this.state.tileProvider.url}
           />
 
-          {this.renderMarkers(this.props.selectedTravel, this.state.zoomLevel)}
+          {this.renderImages(this.props.selectedTravel, this.state.zoomLevel)}
 
           <FeatureGroup>
             {this.props.travels.map(travel => {
@@ -241,7 +241,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
   }
 
 
-  private renderMarkers = memoizeOne((travel: Travel, zoomLevel: number) => {
+  private renderImages = memoizeOne((travel: Travel, zoomLevel: number) => {
     if(!travel) {
       return null;
     }
@@ -258,6 +258,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
                 icon={new L.Icon({
                   iconUrl: image.thumbnailUrl,
                   iconSize: this.getImageSize(image, zoomLevel),
+                  className: 'image-marker',
                 })}
                 riseOnHover={true}
                 onclick={this.props.setSelectedImage.bind(this, image)}
@@ -270,10 +271,11 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
   });
 
   private getImageSize(image: Image, zoomLevel: number): [number, number] {
-    let area = Math.pow(2, 1.5 * zoomLevel) * .12;
-    area = Math.min(10000, Math.max(500, area));
-    let height = Math.sqrt(area / image.aspectRatio);
-    let width = height * image.aspectRatio;
+    const area = Math.min(Math.max(Math.pow(2, 1.5 * zoomLevel) * .1, 1000), 10000);
+    // const aspectRatio = image.aspectRatio;
+    const aspectRatio = 1;
+    let height = Math.sqrt(area / aspectRatio);
+    let width = height * aspectRatio;
     return [width, height];
   }
 

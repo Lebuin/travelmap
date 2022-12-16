@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CSSTransition } from 'react-transition-group';
 import Image from './Image';
 
 
@@ -70,32 +71,43 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
 
 
   render() {
-    if(!this.props.image) {
-      return null;
+    let image = null;
+    if(this.props.image) {
+      image = (<img className="slideshow__img" src={this.props.image.url} />);
     }
 
+
     return (
-      <div className="slideshow">
-        <div className="slideshow__exit">
-          <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
-            <i className="far fa-times"></i>
+      <CSSTransition
+        in={!!this.props.image}
+        timeout={{
+          enter: 500,
+          exit: 300,
+        }}
+        classNames="animate"
+      >
+        <div className="slideshow">
+          <div className="slideshow__exit">
+            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
+              <i className="far fa-times"></i>
+            </div>
           </div>
-        </div>
 
-        <div className="slideshow__prev">
-          <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
-            <i className="far fa-chevron-left"></i>
+          <div className="slideshow__prev">
+            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
+              <i className="far fa-chevron-left"></i>
+            </div>
           </div>
-        </div>
 
-        <div className="slideshow__next">
-          <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
-            <i className="far fa-chevron-right"></i>
+          <div className="slideshow__next">
+            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
+              <i className="far fa-chevron-right"></i>
+            </div>
           </div>
-        </div>
 
-        <img className="slideshow__img" src={this.props.image.url} />
-      </div>
+          {image}
+        </div>
+      </CSSTransition>
     )
   }
 }

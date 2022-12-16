@@ -5,7 +5,25 @@
   width: 100%;
   height: 100%;
 
-  background: black;
+  background: #131415;
+
+  display: none;
+  opacity: 0;
+  &.animate-enter,
+  &.animate-enter-done,
+  &.animate-exit {
+    display: block;
+  }
+  &.animate-enter {
+    transition: opacity 500ms;
+  }
+  &.animate-enter-active,
+  &.animate-enter-done {
+    opacity: 1;
+  }
+  &.animate-exit {
+    transition: opacity 300ms;
+  }
 
 
   &__exit {
