@@ -43,9 +43,10 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
     this._bind();
 
     this.state = {
-      zoomLevel: 10,
+      zoomLevel: 0,
       center: null,
       tileProvider: tileProviders[0],
+      ...this.popState(),
     };
     this.renderer = L.canvas({
       padding: .3,
@@ -68,8 +69,44 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
   }
 
 
+
+  private pushState() {
+    let locationParts = [
+      this.state.center[0].toFixed(5),
+      this.state.center[1].toFixed(5),
+      this.state.zoomLevel.toFixed(1),
+    ]
+    let url = `?l=` + locationParts.join(',');
+    window.history.pushState('', '', url);
+  }
+
+  private popState() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const l = searchParams.get('l');
+    if(l != null) {
+      const locationParts = l.split(',');
+      const center: [number, number] = [
+        parseFloat(locationParts[0]),
+        parseFloat(locationParts[1]),
+      ];
+      const zoomLevel = parseFloat(locationParts[2]);
+      if(!Number.isNaN(center[0]) && !Number.isNaN(center[1]) && !Number.isNaN(zoomLevel)) {
+        return {
+          zoomLevel: zoomLevel,
+          center: center,
+        };
+      }
+    }
+
+    return {}
+  }
+
+
+
   bindMap(map: any) {
     this.refMap = map;
+    // We need to re-render to correctly set isInViewport
+    this.setState({});
   }
   bindTravelLayer(travel: Travel, layer: any) {
     this.refsTravelLayer[travel.id] = layer;
@@ -94,6 +131,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
       zoomLevel: viewport.zoom,
       center: viewport.center,
     });
+    this.pushState();
   }
   setViewportDebounced = debounce(this.setViewport, 100);
 
@@ -123,11 +161,22 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
 
 
   public render() {
+    let viewport = null, bounds = null;
+    if(this.state.center && this.state.zoomLevel) {
+      viewport = {
+        center: this.state.center,
+        zoom: this.state.zoomLevel,
+      };
+    } else {
+      bounds = this.getBounds(this.props.travels);
+    }
+
     return (
       <React.Fragment>
         <LeafletMap
           ref={this.bindMap}
-          bounds={this.getBounds(this.props.travels)}
+          bounds={bounds}
+          viewport={viewport}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}
           zoomSnap={0.1}

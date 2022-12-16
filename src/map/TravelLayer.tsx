@@ -31,7 +31,7 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
 
     this.state = {
       travel: this.props.travel,
-      accuracy: 0,
+      accuracy: -1,
       data: null,
     };
   }

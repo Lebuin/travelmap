@@ -19,7 +19,6 @@ const travels = Array.from(travelDefs).map(travelDef => {
       location,
     );
   });
-  console.log(travelDef.id, images.length);
 
   return new Travel(
     travelDef.id,
