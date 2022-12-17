@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import Image from './Image';
+import Swipeable from '../lib/Swipeable';
+import { isMobile } from '../util';
 
 
 interface SlideshowProps {
@@ -8,17 +10,28 @@ interface SlideshowProps {
   setSelectedImage(image: Image): any,
 }
 
-interface SlideshowState {}
+interface SlideshowState {
+  showNavigation: boolean
+}
 
 
 export default class Slideshow extends React.Component<SlideshowProps, SlideshowState> {
+  hideNavigationTimeout: number;
+
   constructor(props: SlideshowProps) {
     super(props);
     this._bind();
+
+    this.state = {
+      showNavigation: false,
+    };
   }
 
   _bind() {
+    this.onMouseMove = this.onMouseMove.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.showNavigation = this.showNavigation.bind(this);
+    this.hideNavigation = this.hideNavigation.bind(this);
     this.exit = this.exit.bind(this);
     this.previous = this.previous.bind(this);
     this.next = this.next.bind(this);
@@ -29,8 +42,25 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     document.addEventListener('keydown', this.onKeyDown);
   }
 
+  componentDidUpdate(prevProps: SlideshowProps) {
+    if(!!this.props.image !== !!prevProps.image && isMobile()) {
+      if(this.props.image) {
+        document.documentElement.requestFullscreen({ navigationUI: 'hide' });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  }
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
+  }
+
+
+  onMouseMove() {
+    this.showNavigation();
+    clearTimeout(this.hideNavigationTimeout);
+    this.hideNavigationTimeout = window.setTimeout(this.hideNavigation, 3000);
   }
 
 
@@ -43,6 +73,19 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
       case 'ArrowRight':
         return this.next();
     }
+  }
+
+
+
+  showNavigation() {
+    this.setState({
+      showNavigation: true,
+    });
+  }
+  hideNavigation() {
+    this.setState({
+      showNavigation: false,
+    });
   }
 
 
@@ -78,36 +121,59 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
 
 
     return (
-      <CSSTransition
-        in={!!this.props.image}
-        timeout={{
-          enter: 500,
-          exit: 300,
-        }}
-        classNames="animate"
+      <Swipeable
+        onSwipedLeft={this.previous}
+        onSwipedRight={this.next}
       >
-        <div className="slideshow">
-          <div className="slideshow__exit">
-            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
-              <i className="far fa-times"></i>
+        <CSSTransition
+          in={!!this.props.image}
+          timeout={{
+            enter: 500,
+            exit: 300,
+          }}
+          classNames="animate"
+        >
+          <div className="slideshow" onMouseMove={this.onMouseMove}>
+            <div className="slideshow__exit">
+              <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
+                <i className="far fa-times"></i>
+              </div>
             </div>
-          </div>
 
-          <div className="slideshow__prev">
-            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
-              <i className="far fa-chevron-left"></i>
-            </div>
-          </div>
+            <CSSTransition
+              in={!!this.state.showNavigation}
+              timeout={{
+                enter: 300,
+                exit: 300,
+              }}
+              classNames="animate"
+            >
+              <div className="slideshow__nav slideshow__nav--prev">
+                <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
+                  <i className="far fa-chevron-left"></i>
+                </div>
+              </div>
+            </CSSTransition>
 
-          <div className="slideshow__next">
-            <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
-              <i className="far fa-chevron-right"></i>
-            </div>
-          </div>
+            <CSSTransition
+              in={!!this.state.showNavigation}
+              timeout={{
+                enter: 300,
+                exit: 300,
+              }}
+              classNames="animate"
+            >
+              <div className="slideshow__nav slideshow__nav--next">
+                <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
+                  <i className="far fa-chevron-right"></i>
+                </div>
+              </div>
+            </CSSTransition>
 
-          {image}
-        </div>
-      </CSSTransition>
+            {image}
+          </div>
+        </CSSTransition>
+      </Swipeable>
     )
   }
 }
