@@ -66,9 +66,11 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
             </div>
           </div>
 
-          <div className="btn btn--round" onClick={this.openSlideshow}>
-            <i className="far fa-images"></i>
-          </div>
+          {this.props.travel.images.length > 0 &&
+            <div className="btn btn--round" onClick={this.openSlideshow}>
+              <i className="far fa-images"></i>
+            </div>
+          }
           <div className="btn btn--round" onClick={this.fitBounds}>
             <i className="far fa-map-marked"></i>
           </div>
