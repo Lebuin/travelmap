@@ -122,8 +122,8 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
 
     return (
       <Swipeable
-        onSwipedLeft={this.previous}
-        onSwipedRight={this.next}
+        onSwipedLeft={this.next}
+        onSwipedRight={this.previous}
       >
         <CSSTransition
           in={!!this.props.image}
