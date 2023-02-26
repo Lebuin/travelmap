@@ -5,20 +5,41 @@ import Travel, { TravelType } from './Travel';
 import Image from '../slideshow/Image';
 
 
+// We mark images taken within 10 seconds of each other as panoramas.
+const PANORAMA_THRESHOLD = 10 * 1000;
+
+
+function createImageFromDef(imageDef: any) {
+  const location = imageDef.lat == null || imageDef.lng == null ?
+    null :
+    new L.LatLng(imageDef.lat, imageDef.lng);
+  return new Image(
+    imageDef.filename,
+    new Date(imageDef.dateCreated),
+    imageDef.width,
+    imageDef.height,
+    location,
+  );
+}
+
+
+function filterPanoramas(image: Image, index: number, array: Image[]) {
+  const prevImage = array[index - 1];
+  const nextImage = array[index + 1];
+  return !(
+    prevImage
+    && image.dateCreated.getTime() - prevImage.dateCreated.getTime() < PANORAMA_THRESHOLD
+    || nextImage
+    && nextImage.dateCreated.getTime() - image.dateCreated.getTime() < PANORAMA_THRESHOLD
+  );
+}
+
+
 const travels = Array.from(travelDefs).map(travelDef => {
   const imageDefs = allImageDefs[travelDef.id] || [];
-  const images = Array.from(imageDefs).map((imageDef: any) => {
-    const location = imageDef.lat == null || imageDef.lng == null ?
-      null :
-      new L.LatLng(imageDef.lat, imageDef.lng);
-    return new Image(
-      imageDef.filename,
-      new Date(imageDef.dateCreated),
-      imageDef.width,
-      imageDef.height,
-      location,
-    );
-  });
+  const images = Array.from(imageDefs)
+    .map(createImageFromDef)
+    .filter(filterPanoramas);
 
   return new Travel(
     travelDef.id,
