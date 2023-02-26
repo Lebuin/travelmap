@@ -48,7 +48,7 @@ function parseTravels(travelDefs) {
 
 function getBounds(travelId) {
   const path = PATH_TRACK.replace('{id}', travelId);
-  const data = fs.readFileSync(path);
+  const data = fs.readFileSync(path).toString();
   const track = JSON.parse(data);
   const bounds = {
     min: {
