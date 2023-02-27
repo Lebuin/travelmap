@@ -50,7 +50,7 @@ async function getImages(travelId) {
     images.push(image);
   }
 
-  images.sort((i1, i2) => i1.dateCreated - i2.dateCreated);
+  images.sort((i1, i2) => i1.dateCreated.getTime() - i2.dateCreated.getTime());
 
   return images;
 }

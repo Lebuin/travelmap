@@ -4,7 +4,7 @@ import Travel from '../travels/Travel';
 
 export default class Image {
   private _travel: Travel;
-  private readonly filename: string;
+  readonly filename: string;
   readonly dateCreated: Date;
   readonly width: number;
   readonly height: number;

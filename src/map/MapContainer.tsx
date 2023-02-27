@@ -12,6 +12,7 @@ import tileProviders, { TileProvider } from './tileProviders';
 import TravelLayer from './TravelLayer';
 import TravelPicker from './TravelPicker';
 import ZoomButtons from './ZoomButtons';
+import stateService from '../stateService';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -71,18 +72,17 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
 
 
   private pushState() {
-    let locationParts = [
+    const locationParts = [
       this.state.center[0].toFixed(5),
       this.state.center[1].toFixed(5),
       this.state.zoomLevel.toFixed(2),
     ]
-    let url = `?l=` + locationParts.join(',');
-    window.history.pushState('', '', url);
+    const l = locationParts.join(',');
+    stateService.set('l', l);
   }
 
   private popState() {
-    const searchParams = new URLSearchParams(window.location.search);
-    const l = searchParams.get('l');
+    const l = stateService.get('l');
     if(l != null) {
       const locationParts = l.split(',');
       const center: [number, number] = [

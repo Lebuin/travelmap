@@ -9,6 +9,7 @@
 
   display: none;
   opacity: 0;
+  &.animate-appear,
   &.animate-enter,
   &.animate-enter-done,
   &.animate-exit {
@@ -17,6 +18,7 @@
   &.animate-enter {
     transition: opacity 500ms;
   }
+  &.animate-appear-active,
   &.animate-enter-active,
   &.animate-enter-done {
     opacity: 1;

@@ -1,11 +1,30 @@
-To develop locally:
+## Build all assets:
+
+```
+# Create track "thumbnails"
+scripts/simplify-tracks.sh
+# Build travel metadata
+node build-travels.js
+
+# Export images from Darktable and JPG folders
+node scripts/export-images.js
+# Create thumbnails
+scripts/create-thumbnails.sh
+# Build image metadata
+node scripts/build-images.js
+# Sync images to remote server
+scripts/sync-images.sh
+```
+
+
+## Develop locally:
 
 ```
 npm install
 npm start
 ```
 
-To deploy on a server behind [nginx-proxy](https://github.com/nginx-proxy/nginx-proxy):
+## Deploy on a server behind [traefik](https://github.com/traefik/traefik):
 
 ```
 docker-compose up -d

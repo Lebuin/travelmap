@@ -37,39 +37,23 @@ function getDestFolder(travelDef) {
 }
 
 
-function exportJpegImages(srcFolder, destFolder) {
-  const pattern = path.join(srcFolder, '*.jpg');
-  console.log(pattern);
-  const files = glob.sync(pattern, { nocase: true});
-  files.forEach(file => {
-    console.log(file);
-    const command = `mogrify -path '${destFolder}' -thumbnail ${IMAGE_SIZE}x${IMAGE_SIZE} -quality ${IMAGE_QUALITY} '${file}'`;
-    execSync(command);
-  });
-}
-
-
-function exportRawImages(srcFolder, destFolder) {
-  const command = `darktable-cli '${srcFolder}' '${destFolder}' --width ${IMAGE_SIZE} --height ${IMAGE_SIZE} --core --conf plugins/imageio/format/jpeg/quality=${IMAGE_QUALITY}`;
-  execSync(command);
-}
-
-
 function exportImages(travelDef) {
   const srcFolder = getSrcFolder(travelDef);
   const destFolder = getDestFolder(travelDef);
-  const isJpeg = travelDef.isJpeg === '1';
   if(fs.existsSync(destFolder)) {
     return;
   }
 
   console.log(travelDef.id);
-  fs.mkdirSync(destFolder, { recursive: true });
-  if(isJpeg) {
-    exportJpegImages(srcFolder, destFolder);
-  } else {
-    exportRawImages(srcFolder, destFolder);
+  const destFolderTmp = destFolder + '.tmp';
+  if(fs.existsSync(destFolderTmp)) {
+    fs.rmSync(destFolderTmp, { recursive: true });
   }
+
+  fs.mkdirSync(destFolderTmp);
+  const command = `darktable-cli '${srcFolder}' '${destFolderTmp}' --width ${IMAGE_SIZE} --height ${IMAGE_SIZE} --core --conf plugins/imageio/format/jpeg/quality=${IMAGE_QUALITY}`;
+  execSync(command);
+  fs.renameSync(destFolderTmp, destFolder);
 }
 
 

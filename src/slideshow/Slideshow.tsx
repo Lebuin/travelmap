@@ -126,6 +126,7 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
         onSwipedRight={this.previous}
       >
         <CSSTransition
+          appear={true}
           in={!!this.props.image}
           timeout={{
             enter: 500,
