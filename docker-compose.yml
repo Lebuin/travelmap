@@ -3,6 +3,8 @@ services:
   node:
     build: ./
     restart: always
+    volumes:
+      - ./:/opt/travelmap
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.travelmap.rule=Host(`travels.lenders.dev`)"
