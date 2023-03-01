@@ -186,6 +186,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
           renderer={this.renderer}
         >
           <TileLayer
+            key={this.state.tileProvider.url}
             attribution={this.state.tileProvider.attribution}
             url={this.state.tileProvider.url}
           />
