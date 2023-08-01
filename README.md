@@ -53,3 +53,10 @@ https://www.gpsvisualizer.com/elevation
 ## Create a gpx track routed on railways
 
 See Documents/programming/open-rail-routing/README.md
+
+
+## Update elevations of a RWGPS track
+
+```
+./scripts/update-elevations.mjs src/assets/tracks/<travel>.json
+```
