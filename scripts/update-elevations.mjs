@@ -45,7 +45,7 @@ async function writeTravel(travel, path) {
 
 function serializeJson(travel) {
   let data = JSON.stringify(travel, null, 2);
-  data = data.replace(/^\s+\[\n\s+([\d.-]+),\n\s+([\d.-]+),\s+([\d.-]+)\n\s+\],/gm, '[$1,$2,$3],');
+  data = data.replace(/^\s+\[\n\s+([\d.-]+),\n\s+([\d.-]+),\s+([\d.-]+)\n\s+\]/gm, '[$1,$2,$3]');
   return data;
 }
 
