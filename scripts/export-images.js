@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { parse } = require('csv-parse/sync');
 const fs = require('fs');
 const path = require('path');
