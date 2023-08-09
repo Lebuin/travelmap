@@ -3,6 +3,7 @@ import memoize from 'memoize-one';
 import * as React from 'react';
 import { format } from 'util';
 import Travel, { TravelData, TravelSegment, TravelType } from '../travels/Travel';
+import _ from 'lodash';
 
 
 interface ElevationMapProps {
@@ -14,6 +15,22 @@ interface ElevationMapState {
   height: number,
   data: TravelData,
 };
+
+
+type Longitude = number;
+type Latitude = number;
+type Distance = number;
+type Elevation = number;
+type Coordinate = [Longitude, Latitude];
+type PosDist = [Distance, Elevation, Coordinate];
+type SegmentInfo = {
+  isTravel: boolean,
+  posDists: PosDist[],
+  distance: Distance,
+  minElevation: Elevation,
+  maxElevation: Elevation,
+};
+
 
 export default class ElevationMap extends React.Component<ElevationMapProps, ElevationMapState> {
   constructor(props: ElevationMapProps) {
@@ -100,86 +117,48 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
       return null;
     }
     const segments = data.features as TravelSegment[];
-    const numTransitStops = this.getNumTransitStops(segments);
-    const transitWidthPx = 16;
+    const segmentInfos = this.getSegmentInfos(segments);
 
-    let elevations = [[]];
-    let distance = 0;
     let minElevation = 0;
-    let maxElevation = -Infinity;
+    let maxElevation = Math.max(...segmentInfos.map(segmentInfo => segmentInfo.maxElevation));
+    // Give the elevation graph a minimal scale
+    maxElevation = Math.max(200, maxElevation);
+    // Make sure we have some padding around the graph.
+    const paddingBottom = .1 * heightPx;
+    const paddingTop = .1 * heightPx;
+    const elevationPerPx = (maxElevation - minElevation) / (heightPx - paddingBottom - paddingTop);
+    maxElevation += paddingTop * elevationPerPx;
+    minElevation -= paddingBottom * elevationPerPx;
 
+    const totalDistance = _.sum(segmentInfos.map(segmentInfo => segmentInfo.distance));
 
-    segments.forEach(segment => {
-      if(this.isTravelSegment(segment)) {
-        const coordinates = segment.geometry.coordinates;
-        for(let i = 0; i < coordinates.length; i++) {
-          const coordinate = coordinates[i];
-          if(i > 0) {
-            const prevCoordinate = coordinates[i - 1];
-            distance += geolib.getDistance(
-              [prevCoordinate[0], prevCoordinate[1]],
-              [coordinate[0], coordinate[1]],
-            );
-          }
-
-          const elevation = coordinate[2];
-          elevations[elevations.length - 1].push([distance, elevation]);
-          minElevation = Math.max(0, Math.min(minElevation, elevation));
-          maxElevation = Math.max(maxElevation, elevation);
-        }
-
-      } else if(elevations[elevations.length - 1].length > 0) {
-        elevations.push([]);
-      }
-    });
-
-    if(elevations[elevations.length - 1].length === 0) {
-      elevations.pop();
-    }
-    maxElevation = Math.max(minElevation + 100, maxElevation);
-
-    // Make sure we have around 4px of blank space
-    maxElevation += 4 / heightPx * maxElevation;
-
-    const travelShapes = elevations.map((segmentElevations, index) => {
-      const dParts = [
-        format('M%s,%s', segmentElevations[0][0] / distance * widthPx + index * transitWidthPx, heightPx),
-        format('V%s', (segmentElevations[0][1] - maxElevation) / (minElevation - maxElevation) * heightPx),
-        ...segmentElevations
-          .map(coordinate => format(
+    const shapes = segmentInfos.map((segmentInfo, index) => {
+      const posDists = segmentInfo.posDists;
+      const posDist = posDists[0];
+      const d = [
+        format('M%s,%s', posDist[0] / totalDistance * widthPx, heightPx),
+        format('V%s', (posDist[1] - maxElevation) / (minElevation - maxElevation) * heightPx),
+        ...posDists
+          .map(posDist => format(
             'L%s,%s',
-            coordinate[0] / distance * widthPx + index * transitWidthPx,
-            (coordinate[1] - maxElevation) / (minElevation - maxElevation) * heightPx
+            posDist[0] / totalDistance * widthPx,
+            (posDist[1] - maxElevation) / (minElevation - maxElevation) * heightPx
           )),
         format('V%s', heightPx),
         'z'
-      ];
-      const d = dParts.join('');
+      ].join('');
+      const fill = segmentInfo.isTravel ? travel.color : 'url(#transit)';
       const path = <path
-        key={'travel:' + index}
+        key={'segment:' + index}
         d={d}
-        fill={travel.color}
+        fill={fill}
         opacity="0.3"
       />;
       return path;
     });
 
-    const transitShapes = Array(numTransitStops).fill(null).map((_, index) => {
-      const segmentElevations = elevations[index];
-      const startDistance = segmentElevations[segmentElevations.length - 1][0];
-      const rect = <rect
-        key={'transit:' + index}
-        x={startDistance / distance * widthPx + index * transitWidthPx}
-        y={0}
-        width={transitWidthPx}
-        height={heightPx}
-        opacity={0.3}
-        fill="url(#transit)"
-      />;
-      return rect;
-    });
 
-    const pattern = (
+    shapes.push(
       <pattern id="transit" patternUnits="userSpaceOnUse" width="15" height="15">
         <path
           d="M-15,15l30,-30 M0,15l30,-30 M0,30l30,-30"
@@ -190,26 +169,50 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
       </pattern>
     );
 
-    const shapes = [pattern, ...travelShapes, ...transitShapes];
     return shapes;
   });
 
 
-  getNumTransitStops(segments: TravelSegment[]) {
-    let numStops = 0;
-    let hasSeenTravelSegment = false;
-    for(let i = 0; i < segments.length; i++) {
-      const isTravelSegment = this.isTravelSegment(segments[i]);
-      if(isTravelSegment) {
-        const previousIsTravelSegment = i > 0 && this.isTravelSegment(segments[i - 1]);
-        if(hasSeenTravelSegment && !previousIsTravelSegment) {
-          numStops += 1;
-        }
-        hasSeenTravelSegment = true;
+  getSegmentInfos = memoize((segments: TravelSegment[]) => {
+    const segmentInfos = segments.map(segment => this.getSegmentInfo(segment));
+    this.cleanTransitSegments(segmentInfos);
+    this.scaleTransitSegments(segmentInfos);
+    this.removeTransitElevations(segmentInfos);
+    this.offsetSegments(segmentInfos);
+    return segmentInfos;
+  });
+
+
+  getSegmentInfo(segment: TravelSegment): SegmentInfo {
+    let distance: Distance = 0;
+    let minElevation: Elevation = Infinity;
+    let maxElevation: Elevation = -Infinity;
+    const posDists: PosDist[] = [];
+
+    const positions = segment.geometry.coordinates;
+    for(let i = 0; i < positions.length; i++) {
+      const [lon, lat, rawElevation] = positions[i];
+      const elevation = Math.max(0, rawElevation);
+      if(i > 0) {
+        const [prevLon, prevLat] = positions[i - 1];
+        distance += geolib.getDistance([prevLon, prevLat], [lon, lat]);
       }
+
+      posDists.push([distance, elevation, [lon, lat]]);
+      minElevation = Math.max(0, Math.min(minElevation, elevation));
+      maxElevation = Math.max(maxElevation, elevation);
     }
-    return numStops;
+
+
+    return {
+      isTravel: this.isTravelSegment(segment),
+      posDists: posDists,
+      distance: distance,
+      minElevation: minElevation,
+      maxElevation: maxElevation,
+    };
   }
+
 
   isTravelSegment(segment: TravelSegment) {
     const typeStr = segment.properties?.type;
@@ -218,6 +221,105 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
     } else {
       const type = TravelType.parse(typeStr);
       return type === TravelType.BIKING || type === TravelType.HIKING;
+    }
+  }
+
+
+  cleanTransitSegments(segmentInfos: SegmentInfo[]) {
+    while(!segmentInfos[0].isTravel) {
+      segmentInfos.shift();
+    }
+    while(!segmentInfos[segmentInfos.length - 1].isTravel) {
+      segmentInfos.pop();
+    }
+
+    let i = 0;
+    while(i < segmentInfos.length - 1) {
+      if(!segmentInfos[i].isTravel && !segmentInfos[i + 1].isTravel) {
+        this.mergeTransit(segmentInfos[i], segmentInfos[i + 1]);
+        segmentInfos.splice(i + 1, 1);
+      } else {
+        i += 1;
+      }
+    }
+  }
+
+
+  mergeTransit(segmentInfo1: SegmentInfo, segmentInfo2: SegmentInfo) {
+    segmentInfo2.posDists.forEach(posDist => {
+      posDist[0] += segmentInfo1.distance;
+    });
+    segmentInfo1.posDists = segmentInfo1.posDists.concat(segmentInfo2.posDists);
+    segmentInfo1.distance += segmentInfo2.distance;
+    segmentInfo1.minElevation = Math.min(segmentInfo1.minElevation, segmentInfo2.minElevation);
+    segmentInfo1.maxElevation = Math.max(segmentInfo1.maxElevation, segmentInfo2.maxElevation);
+  }
+
+
+  scaleTransitSegments(segmentInfos: SegmentInfo[]) {
+    const transitSegmentInfos = segmentInfos.filter(segmentInfo => !segmentInfo.isTravel);
+    const distances = transitSegmentInfos.map(segmentInfo => segmentInfo.distance);
+
+    // Compress distances, so that the differences between long and short transit segments is not
+    // as pronounced
+    const compressedDistances = distances.map(distance => Math.sqrt(distance));
+
+    // Determine the total fraction that transit segments should take up. This depends on the
+    // number of transit stops.
+    const minFraction = 0.05;
+    const maxFraction = 0.3;
+    const maxTransitStops = 10;
+    const numTransitStops = Math.min(transitSegmentInfos.length, maxTransitStops);
+    const fraction = (
+      minFraction + (maxFraction - minFraction) * (numTransitStops - 1) / (maxTransitStops - 1)
+    );
+
+    // Determine the correct scale so that the transit segments take up the desired fraction.
+    const totalCompressedDistance = _.sum(compressedDistances);
+    const travelSegmentInfos = segmentInfos.filter(segmentInfo => segmentInfo.isTravel);
+    const totalTravelDistance = _.sum(travelSegmentInfos.map(segmentInfo => segmentInfo.distance));
+    const scale = totalTravelDistance * fraction / totalCompressedDistance;
+
+    // Rescale the segments
+    const scaledDistances = compressedDistances.map(logDistance => logDistance * scale);
+    const scales = scaledDistances.map((scaledDistance, i) => scaledDistance / distances[i]);
+    transitSegmentInfos.forEach((segmentInfo, i) => {
+      segmentInfo.distance *= scales[i];
+      segmentInfo.posDists.forEach(posDist => {
+        posDist[0] *= scales[i];
+      });
+    });
+  }
+
+
+  offsetSegments(segmentInfos: SegmentInfo[]) {
+    let offset = 0;
+    segmentInfos.forEach(segmentInfo => {
+      segmentInfo.posDists.forEach(posDist => {
+        posDist[0] += offset;
+      });
+      offset += segmentInfo.distance;
+    });
+  }
+
+
+  removeTransitElevations(segmentInfos: SegmentInfo[]) {
+    for(let i = 1; i < segmentInfos.length - 1; i++) {
+      const segment = segmentInfos[i];
+      if(!segment.isTravel) {
+        const prevSegment = segmentInfos[i - 1];
+        const nextSegment = segmentInfos[i + 1];
+        const startElevation = prevSegment.posDists[prevSegment.posDists.length - 1][1];
+        const endElevation = nextSegment.posDists[0][1];
+        segment.posDists.forEach(posDist => {
+          const elevation = startElevation + (
+            (endElevation - startElevation) * posDist[0] / segment.distance
+          );
+          posDist[1] = elevation;
+        });
+        segment.minElevation = Math.min(startElevation, endElevation);
+        segment.maxElevation = Math.max(startElevation, endElevation);
+      }
     }
   }
 }
