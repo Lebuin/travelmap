@@ -176,6 +176,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
         <LeafletMap
           ref={this.bindMap}
           bounds={bounds}
+          boundsOptions={this.fitBoundsOptions}
           viewport={viewport}
           minZoom={MIN_ZOOM_LEVEL}
           maxZoom={MAX_ZOOM_LEVEL}

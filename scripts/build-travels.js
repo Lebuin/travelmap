@@ -29,8 +29,9 @@ function parseTravels(travelDefs) {
   const travels = travelDefs.map(travelDef => {
     const id = travelDef.id;
     const types = travelDef.types.split(',');
-    const colorDef = travelDef.color.split('.');
-    const color = materialColors[colorDef[0]][colorDef[1]];
+    const colorName = travelDef.color;
+    const tint = travelDef.tint;
+    const color = materialColors[colorName][tint];
 
     const bounds = getBounds(id);
 
