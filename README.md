@@ -35,11 +35,12 @@ docker-compose up -d
 
 # Regular tasks
 
-## Export all images
+## Export images
 
 ```
-# Export images from Darktable and JPG folders
-node scripts/export-images.js
+# Export images from Darktable and JPG folders (optionally specify travels for which to do this)
+node scripts/export-images.js [travel...]
+
 # Sync images to remote server
 scripts/sync-images.sh
 ```

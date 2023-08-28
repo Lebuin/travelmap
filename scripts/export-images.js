@@ -3,7 +3,6 @@
 const { parse } = require('csv-parse/sync');
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 const { execSync } = require('child_process');
 
 const PATH_TRAVEL_DEFS = 'src/assets/travels.csv';
@@ -61,7 +60,11 @@ function exportImages(travelDef) {
 
 function main() {
   const travelDefs = readTravelDefs(PATH_TRAVEL_DEFS);
+  const travelIds = process.argv.length > 2 ?
+    process.argv.slice(2) :
+    travelDefs.map(travelDef => travelDef.id);
   travelDefs
+    .filter(travelDef => travelIds.includes(travelDef.id))
     .filter(travelDef => travelDef.imageFolder)
     .forEach(exportImages);
 }
