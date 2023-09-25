@@ -51,6 +51,7 @@ function exportImages(travelDef) {
 
   exportDarktable(srcFolder, destFolderTmp);
   stitchPanoramas(srcFolder, destFolderTmp);
+  scaleImages(destFolderTmp);
 
   if(fs.existsSync(destFolder)) {
     fs.rmSync(destFolder, { recursive: true });
@@ -78,13 +79,10 @@ function exportDarktable(srcFolder, destFolder) {
   execFileSync('darktable-cli', [
     srcFolder,
     destFolder,
-    '--width', IMAGE_SIZE,
-    '--height', IMAGE_SIZE,
     '--core',
     '--conf', `plugins/imageio/format/jpeg/quality=${IMAGE_QUALITY}`,
   ]);
 }
-
 
 
 function stitchPanoramas(srcFolder, destFolder) {
@@ -95,6 +93,18 @@ function stitchPanoramas(srcFolder, destFolder) {
 
   destPtoFiles.forEach(destPtoFile => {
     fs.rmSync(destPtoFile);
+  });
+}
+
+
+function scaleImages(folder) {
+  glob.sync(`${folder}/*.jpg`).forEach(file => {
+    execFileSync('vipsthumbnail', [
+      file,
+      '--size', `${IMAGE_SIZE}x${IMAGE_SIZE}`,
+      '-o', 'tmp.jpg'
+    ]);
+    fs.renameSync(`${folder}/tmp.jpg`, file);
   });
 }
 

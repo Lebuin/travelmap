@@ -23,23 +23,9 @@ function createImageFromDef(imageDef: any) {
 }
 
 
-function filterPanoramas(image: Image, index: number, array: Image[]) {
-  const prevImage = array[index - 1];
-  const nextImage = array[index + 1];
-  return !(
-    prevImage
-    && image.dateCreated.getTime() - prevImage.dateCreated.getTime() < PANORAMA_THRESHOLD
-    || nextImage
-    && nextImage.dateCreated.getTime() - image.dateCreated.getTime() < PANORAMA_THRESHOLD
-  );
-}
-
-
 const travels = Array.from(travelDefs).map(travelDef => {
   const imageDefs = allImageDefs[travelDef.id] || [];
-  const images = Array.from(imageDefs)
-    .map(createImageFromDef)
-    .filter(filterPanoramas);
+  const images = Array.from(imageDefs).map(createImageFromDef);
 
   return new Travel(
     travelDef.id,

@@ -159,7 +159,7 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
 
 
     shapes.push(
-      <pattern id="transit" patternUnits="userSpaceOnUse" width="15" height="15">
+      <pattern key="pattern-transit" id="transit" patternUnits="userSpaceOnUse" width="15" height="15">
         <path
           d="M-15,15l30,-30 M0,15l30,-30 M0,30l30,-30"
           stroke={travel.color}
