@@ -23,11 +23,28 @@ function createImageFromDef(imageDef: any) {
 }
 
 
+function printPanoramas(travel: Travel) {
+  travel.images.forEach((image, i, array) => {
+    const prevImage = array[i - 1];
+    const nextImage = array[i + 1];
+    const isPanorama = (
+      prevImage
+      && image.dateCreated.getTime() - prevImage.dateCreated.getTime() < PANORAMA_THRESHOLD
+      || nextImage
+      && nextImage.dateCreated.getTime() - image.dateCreated.getTime() < PANORAMA_THRESHOLD
+    );
+    if(isPanorama) {
+      console.log(`Possible panorama: ${travel.id} - ${image.filename}`);
+    }
+  });
+}
+
+
 const travels = Array.from(travelDefs).map(travelDef => {
   const imageDefs = allImageDefs[travelDef.id] || [];
   const images = Array.from(imageDefs).map(createImageFromDef);
 
-  return new Travel(
+  const travel = new Travel(
     travelDef.id,
     travelDef.name,
     new Date(travelDef.startDate),
@@ -37,5 +54,9 @@ const travels = Array.from(travelDefs).map(travelDef => {
     new L.LatLngBounds(travelDef.bounds.min, travelDef.bounds.max),
     images,
   );
+
+  printPanoramas(travel);
+
+  return travel;
 });
 export default travels;
