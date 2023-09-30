@@ -1,8 +1,8 @@
 id,name,startDate,endDate,types,color,tint,imageFolder,imageFolderIsLocal
 torknoeter,Torgny – Knokke,2010-04-11,2010-04-16,biking,red,600,,
-kopenhagen,Kopenhagen,2012-09-03,2012-04-21,biking,pink,600,2012/09/Kopenhagen (edit),0
-marseille,Marseille,2013-04-01,2013-04-09,biking,deepPurple,600,2013/04/fietstocht Marseille,0
-venetie,Venetië,2013-08-26,2013-09-13,biking,indigo,600,2013/09/fietstocht Venetië,0
+kopenhagen,Kopenhagen,2012-09-03,2012-04-21,biking,pink,600,2012/09/Kopenhagen (edit),1
+marseille,Marseille,2013-04-01,2013-04-09,biking,deepPurple,600,2013/04/fietstocht Marseille,1
+venetie,Venetië,2013-08-26,2013-09-13,biking,indigo,600,2013/09/fietstocht Venetië,1
 italie-balkan,Italië & Balkan,2014-02-10,2014-08-10,biking,blue,600,2014/Italie - Balkan,1
 rome,Basel – Rome,2015-04-03,2015-04-20,biking,lightBlue,600,2015/04/Basel - Rome,1
 schotland,Schotland,2016-06-02,2016-06-20,biking,cyan,600,2016/06/Schotland,1

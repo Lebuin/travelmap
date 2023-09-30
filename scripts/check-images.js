@@ -20,9 +20,8 @@ function main() {
     const imageDefs = allImageDefs[travelId];
 
     imageDefs
-      .filter(imageDef => !isPanorama(imageDef))
       .filter(imageDef => !srcImageExists(travelDef, imageDef))
-      .forEach(image => { console.log(`${travelId} - ${image.filename}`); });
+      .forEach(image => { console.log(`${travelId}: ${image.filename}`); });
   });
 }
 
@@ -37,18 +36,16 @@ function readTravelDefs(path) {
 }
 
 
-function isPanorama(imageDef) {
-  return !imageDef.filename.match(/^IMG_\d{4}\.jpg$/i);
-}
-
-
 function srcImageExists(travelDef, imageDef) {
   const srcFolder = getSrcFolder(travelDef);
   const srcBasename = imageDef.filename.replace(/\.jpg$/, '');
   const srcPath = path.join(srcFolder, srcBasename);
 
   const candidateExtensions = ['.jpg', '.JPG', '.CR2'];
-  const candidatePaths = candidateExtensions.map(ext => srcPath + ext);
+  const candidatePaths = [
+    ...candidateExtensions.map(ext => srcPath + ext),
+    path.join(srcFolder + ' (jpg)', srcBasename + '.pto'),
+  ];
 
   return candidatePaths.some(candidatePath => fs.existsSync(candidatePath));
 }
