@@ -25,8 +25,12 @@ function parseExifDateTime(s) {
 }
 
 
-function parseExifLatLon(a) {
-  return a[0] + a[1] / 60 + a[2] / 3600;
+function parseExifLatLon(amplitude, ref) {
+  let pos = amplitude[0] + amplitude[1] / 60 + amplitude[2] / 3600;
+  if(ref === 'S' || ref === 'W') {
+    pos *= -1;
+  }
+  return pos;
 }
 
 
@@ -44,8 +48,8 @@ async function getImages(travelId) {
       dateCreated: parseExifDateTime(exifData.exif.CreateDate),
     };
     if(exifData.gps?.GPSLatitude && exifData.gps?.GPSLongitude) {
-      image.lat = parseExifLatLon(exifData.gps.GPSLatitude);
-      image.lng = parseExifLatLon(exifData.gps.GPSLongitude);
+      image.lat = parseExifLatLon(exifData.gps.GPSLatitude, exifData.gps.GPSLatitudeRef);
+      image.lng = parseExifLatLon(exifData.gps.GPSLongitude, exifData.gps.GPSLongitudeRef);
     }
     images.push(image);
   }
