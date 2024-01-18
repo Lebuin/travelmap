@@ -92,7 +92,9 @@ function stitchPanoramas(srcFolder, destFolder) {
   execFileSync('hugin-batch', destPtoFiles);
 
   destPtoFiles.forEach(destPtoFile => {
+    const folder = destPtoFile.replace(/\.pto$/, '');
     fs.rmSync(destPtoFile);
+    fs.rmSync(folder, { recursive: true });
   });
 }
 
