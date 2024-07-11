@@ -43,7 +43,7 @@ function exportImages(travelDef) {
   const srcFolder = getSrcFolder(travelDef);
   const destFolder = getDestFolder(travelDef);
 
-  const destFolderTmp = destFolder + '.tmp';
+  const destFolderTmp = destFolder + '_tmp';
   if(fs.existsSync(destFolderTmp)) {
     fs.rmSync(destFolderTmp, { recursive: true });
   }
@@ -76,12 +76,24 @@ function getDestFolder(travelDef) {
 
 
 function exportDarktable(srcFolder, destFolder) {
-  execFileSync('darktable-cli', [
-    srcFolder,
-    destFolder,
-    '--core',
-    '--conf', `plugins/imageio/format/jpeg/quality=${IMAGE_QUALITY}`,
-  ]);
+  const xmpFiles = glob.sync(`${srcFolder}/*.xmp`);
+  xmpFiles.forEach(xmpFile => {
+    const xmpContent = fs.readFileSync(xmpFile, 'utf8');
+
+    const outputName = path.basename(xmpFile).replace(/\..+$/, '');
+    const imageFile = xmpContent.match(/xmpMM:DerivedFrom="([^"]*)"/)[1];
+    const rejected = xmpContent.match(/xmp:Rating="-1"/) != null;
+
+    if(!rejected) {
+      execFileSync('darktable-cli', [
+        `${srcFolder}/${imageFile}`,
+        xmpFile,
+        `${destFolder}/${outputName}.jpg`,
+        '--core',
+        '--conf', `plugins/imageio/format/jpeg/quality=${IMAGE_QUALITY}`,
+      ]);
+    }
+  });
 }
 
 
