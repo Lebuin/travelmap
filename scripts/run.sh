@@ -1,15 +1,15 @@
 #!/bin/sh
 
-printf "\n\nBuild travels..."
+printf "Build travels...\n"
 node ./scripts/build-travels.js
 
-printf "\n\nBuild images..."
+printf "\nBuild images...\n\n"
 node ./scripts/build-images.js
 
-printf "\n\nSimplify tracks..."
+printf "\nSimplify tracks...\n\n"
 ./scripts/simplify-tracks.sh
 
-printf "\n\nCreate thumbnails..."
+printf "\nCreate thumbnails...\n\n"
 ./scripts/create-thumbnails.sh
 
 npm run production
