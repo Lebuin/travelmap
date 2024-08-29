@@ -14,4 +14,4 @@ printf "\nCreate thumbnails...\n\n"
 
 npm build
 
-exec npx http-server dist
+exec npx http-server dist -p 80
