@@ -12,4 +12,6 @@ printf "\nSimplify tracks...\n\n"
 printf "\nCreate thumbnails...\n\n"
 ./scripts/create-thumbnails.sh
 
-npm run production
+npm build
+
+npx http-server dist
