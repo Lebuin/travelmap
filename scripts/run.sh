@@ -13,6 +13,6 @@ printf "\nSimplify tracks...\n\n"
 printf "\nCreate thumbnails...\n\n"
 ./scripts/create-thumbnails.sh
 
-npm build
+npm run build
 
 exec npx http-server dist -p 80
