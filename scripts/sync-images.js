@@ -2,13 +2,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const glob = require('glob');
 const { parse } = require('csv-parse/sync');
 const { execFileSync } = require('child_process');
 
 const PATH_TRAVEL_DEFS = 'src/assets/travels.csv';
-const ROOT_SRC = ['pi@home.pi', '/media/pi/BACKUP/homepi/mediaserver/data/pictures'];
-const ROOT_DST = 'ubuntu@lenders.dev:/home/ubuntu/travelmap/src/assets/images';
+const ROOT_SRC = 'gdrive-bijgaardehof-crypt:pictures';
+const ROOT_DST = 'lendersdev:travelmap/src/assets/images';
 
 
 function main() {
@@ -32,14 +31,13 @@ function readTravelDefs(path) {
 function exportImages(travelDef, rootSrc, rootDst) {
   console.log(travelDef.id);
 
-  const folderSrc = path.join(rootSrc[1], travelDef.imageFolder) + '/';
-  const folderDst = path.join(rootDst, travelDef.id) + '/';
+  const folderSrc = path.join(rootSrc, travelDef.imageFolder);
+  const folderDst = path.join(rootDst, travelDef.id);
 
-  execFileSync('ssh', [
-    '-A', rootSrc[0],
-    'rsync', '-vah', '--delete',
-    `"${folderSrc}"`,
-    `"${folderDst}"`,
+  execFileSync('rclone', [
+    'sync',
+    `${folderSrc}`,
+    `${folderDst}`,
   ]);
 }
 
