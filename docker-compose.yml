@@ -3,6 +3,8 @@ services:
     build: ./
     restart: unless-stopped
     volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
       - ./:/opt/travelmap
     labels:
       - "traefik.enable=true"

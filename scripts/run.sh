@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 printf "Build travels...\n"
 node ./scripts/build-travels.js
