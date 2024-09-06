@@ -7,6 +7,6 @@ ln -s ../../../src/assets/images ../../../dist/assets/images/full
 for folder in *; do
   rm -rf $folder/thumb
   mkdir -p $folder/thumb
-  find $folder -type f -maxdepth 1 -name '*.jpg' -exec vipsthumbnail {} --size 100x100 -o thumb/%s.jpg \;
+  find $folder -type f -maxdepth 1 -name '*.jpg' -exec vipsthumbnail {} --size 150x150 -o thumb/%s.jpg \;
   mv $folder/thumb ../../../dist/assets/images/thumb/$folder
 done
