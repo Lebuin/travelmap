@@ -2,9 +2,10 @@ import * as L from 'leaflet';
 import memoizeOne from 'memoize-one';
 import * as React from 'react';
 import { FeatureGroup, Map as LeafletMap, Marker, TileLayer, Viewport } from 'react-leaflet';
-import Image from '../slideshow/Image';
 import debounce from '../lib/debounce';
 import '../lib/SmoothWeelZoom';
+import Image from '../slideshow/Image';
+import stateService from '../stateService';
 import { default as Travel } from '../travels/Travel';
 import LayerPicker from './LayerPicker';
 import SelectedTravel from './SelectedTravel';
@@ -12,7 +13,6 @@ import tileProviders, { TileProvider } from './tileProviders';
 import TravelLayer from './TravelLayer';
 import TravelPicker from './TravelPicker';
 import ZoomButtons from './ZoomButtons';
-import stateService from '../stateService';
 
 
 const MIN_ZOOM_LEVEL: number = 0;
@@ -273,7 +273,7 @@ export default class MapContainer extends React.Component<MapContainerProps, Map
   });
 
   private getImageSize(image: Image, zoomLevel: number): [number, number] {
-    const area = Math.min(Math.max(Math.pow(2, 1.5 * zoomLevel) * .1, 1000), 10000);
+    const area = Math.min(Math.max(Math.pow(2, 1.5 * zoomLevel) * .1, 30 * 30), 80 * 80);
     // const aspectRatio = image.aspectRatio;
     const aspectRatio = 1;
     let height = Math.sqrt(area / aspectRatio);
