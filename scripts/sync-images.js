@@ -7,7 +7,7 @@ const { execFileSync } = require('child_process');
 
 const PATH_TRAVEL_DEFS = 'src/assets/travels.csv';
 const ROOT_SRC = 'gdrive-bijgaardehof-crypt:pictures';
-const ROOT_DST = 'lendersdev:travelmap/src/assets/images';
+const ROOT_DST = 'src/assets/images';
 
 
 function main() {
@@ -35,6 +35,7 @@ function exportImages(travelDef, rootSrc, rootDst) {
   const folderDst = path.join(rootDst, travelDef.id);
 
   execFileSync('rclone', [
+    '--config', 'rclone/rclone.conf',
     'sync',
     `${folderSrc}`,
     `${folderDst}`,

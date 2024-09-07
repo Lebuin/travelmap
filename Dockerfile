@@ -3,7 +3,17 @@ FROM node:15-alpine
 EXPOSE 80
 WORKDIR /opt/travelmap
 
-RUN apk add vips-tools
+RUN apk add --no-cache vips-tools
+
+# Install rclone
+RUN apk add --no-cache --virtual .build-deps \
+    curl \
+  && curl -O https://downloads.rclone.org/rclone-current-linux-amd64.zip \
+  && unzip rclone-current-linux-amd64.zip \
+  && cp rclone-*-linux-amd64/rclone /usr/bin \
+  && chmod 755 /usr/bin/rclone \
+  && rm -r rclone-* \
+  && apk del .build-deps
 
 COPY ./package.json ./package-lock.json ./.npmrc /opt/
 RUN cd /opt \

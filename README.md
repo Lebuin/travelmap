@@ -27,6 +27,10 @@ Visit localhost:8080
 
 # Deploy on a server behind [traefik](https://github.com/traefik/traefik)
 
+Create an rclone config file with access to the gdrive-bijgaardehof-crypt remote at `rclone/rclone.conf`.
+
+Run:
+
 ```
 docker-compose up -d
 ```
@@ -37,15 +41,15 @@ docker-compose up -d
 
 ## Export images
 
-```
-# Export images from Darktable and JPG folders (optionally specify travels to do this for)
-node scripts/export-images.js [travel...]
+On personal pc:
 
-# Sync images to remote server
-scripts/sync-images.sh
+* Export the images from darktable locally using `export-images`
+* Add the path to the image folder to travels.csv
+* Commit and push the changes
 
-# Restart container on server
-```
+On server:
+
+* Run `git pull && docker-compose down && docker compose up -d`
 
 
 ## Add (better) elevation data to a gpx file
