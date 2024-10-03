@@ -1,4 +1,4 @@
-FROM node:15-alpine
+FROM node:22-alpine
 
 EXPOSE 80
 WORKDIR /opt/travelmap
@@ -18,7 +18,7 @@ RUN apk add --no-cache --virtual .build-deps \
 COPY ./package.json ./package-lock.json ./.npmrc /opt/
 RUN cd /opt \
   && apk add --virtual .build-deps \
-    python \
+    python3 \
     make \
     g++ \
   && npm install \
