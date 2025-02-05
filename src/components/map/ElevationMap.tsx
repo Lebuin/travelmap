@@ -53,11 +53,14 @@ export default class ElevationMap extends React.Component<
   }
 
   componentDidMount() {
-    this.props.travel.getData().then((data) => {
+    // Rendering the elevation map is often not possible within one frame. Therefore, we wait a bit
+    // before rendering it, so that the animation of "flying" to the travel is not interrupted.
+    setTimeout(async () => {
+      const data = await this.props.travel.getData();
       this.setState({
         data: data,
       });
-    });
+    }, 1500);
   }
 
   componentDidUpdate(prevProps: ElevationMapProps) {
