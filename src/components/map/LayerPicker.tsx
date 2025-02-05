@@ -4,18 +4,19 @@ import { CSSTransition } from 'react-transition-group';
 import Icon from '../icon';
 import tileProviders, { TileProvider } from './tileProviders';
 
-
 interface LayerPickerProps {
-  tileProvider: TileProvider,
-  setTileProvider(tileProvider: TileProvider): any,
+  tileProvider: TileProvider;
+  setTileProvider(tileProvider: TileProvider): any;
 }
 
 interface LayerPickerState {
-  showMenu: boolean,
+  showMenu: boolean;
 }
 
-
-export default class LayerPicker extends React.Component<LayerPickerProps, LayerPickerState> {
+export default class LayerPicker extends React.Component<
+  LayerPickerProps,
+  LayerPickerState
+> {
   private nodeRefs: React.RefObject<HTMLDivElement | null>[];
 
   constructor(props: LayerPickerProps) {
@@ -33,7 +34,6 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
     this.toggleMenu = this.toggleMenu.bind(this);
   }
 
-
   toggleMenu() {
     this.setState({
       showMenu: !this.state.showMenu,
@@ -46,7 +46,6 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
       showMenu: false,
     });
   }
-
 
   render() {
     return (
@@ -62,7 +61,6 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
       </React.Fragment>
     );
   }
-
 
   renderMenu() {
     return (
@@ -98,15 +96,18 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
           >
             <div className="layer-picker__header">
               <h2 className="layer-picker__title">Layers</h2>
-              <div className="btn btn--round" onClick={this.toggleMenu}>
+              <div
+                className="btn btn--round"
+                onClick={this.toggleMenu}
+              >
                 <Icon icon={MdOutlineClose} />
               </div>
             </div>
 
             <div className="layer-picker__content">
-              {tileProviders.map(tileProvider => {
+              {tileProviders.map((tileProvider) => {
                 let classNames = 'btn layer-picker__item';
-                if(tileProvider === this.props.tileProvider) {
+                if (tileProvider === this.props.tileProvider) {
                   classNames += ' selected';
                 }
                 return (

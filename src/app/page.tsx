@@ -3,10 +3,8 @@
 import dynamic from 'next/dynamic';
 
 const DynamicApp = dynamic(() => import('@/components/App'), {
-  ssr: false
-})
-
-
+  ssr: false,
+});
 
 export default function Home() {
   return <DynamicApp />;

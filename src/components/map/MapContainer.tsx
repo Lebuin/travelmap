@@ -112,13 +112,13 @@ export default class MapContainer extends React.Component<
   }
 
   bindMap(map: MapRef) {
-    if(this.refMap) {
+    if (this.refMap) {
       this.refMap?.off('load', this.onLeafletViewportChange);
       this.refMap?.off('zoomend', this.onLeafletViewportChange);
       this.refMap?.off('moveend', this.onLeafletViewportChange);
     }
     this.refMap = map;
-    if(this.refMap) {
+    if (this.refMap) {
       this.refMap.on('load', this.onLeafletViewportChange);
       this.refMap.on('zoomend', this.onLeafletViewportChange);
       this.refMap.on('moveend', this.onLeafletViewportChange);
@@ -154,9 +154,12 @@ export default class MapContainer extends React.Component<
   setViewportDebounced = debounce(this.setViewport, 100);
 
   onLeafletViewportChange() {
-    if(this.leaflet) {
+    if (this.leaflet) {
       const center = this.leaflet.getCenter();
-      this.setViewportDebounced([center.lat, center.lng], this.leaflet.getZoom());
+      this.setViewportDebounced(
+        [center.lat, center.lng],
+        this.leaflet.getZoom(),
+      );
     }
   }
 
@@ -169,10 +172,7 @@ export default class MapContainer extends React.Component<
   flyToTravel(travel: Travel) {
     setTimeout(() => {
       this.leaflet?.invalidateSize();
-      this.leaflet?.flyToBounds(
-        travel.bounds,
-        this.fitBoundsOptions
-      );
+      this.leaflet?.flyToBounds(travel.bounds, this.fitBoundsOptions);
     });
   }
 
@@ -209,7 +209,8 @@ export default class MapContainer extends React.Component<
             url={this.state.tileProvider.url}
           />
 
-          {this.props.selectedTravel && this.renderImages(this.props.selectedTravel, this.state.zoomLevel)}
+          {this.props.selectedTravel &&
+            this.renderImages(this.props.selectedTravel, this.state.zoomLevel)}
 
           <FeatureGroup>
             {this.props.travels.map((travel) => {
@@ -232,11 +233,13 @@ export default class MapContainer extends React.Component<
           </FeatureGroup>
         </LeafletMapContainer>
 
-        {this.props.selectedTravel && <SelectedTravel
-          travel={this.props.selectedTravel}
-          setSelectedTravel={this.props.setSelectedTravel}
-          setSelectedImage={this.props.setSelectedImage}
-        ></SelectedTravel>}
+        {this.props.selectedTravel && (
+          <SelectedTravel
+            travel={this.props.selectedTravel}
+            setSelectedTravel={this.props.setSelectedTravel}
+            setSelectedImage={this.props.setSelectedImage}
+          ></SelectedTravel>
+        )}
 
         <div className="picker-btns">
           <LayerPicker
@@ -280,7 +283,7 @@ export default class MapContainer extends React.Component<
                 }
                 riseOnHover={true}
                 eventHandlers={{
-                  click: this.props.setSelectedImage.bind(this, image)
+                  click: this.props.setSelectedImage.bind(this, image),
                 }}
               />
             );
@@ -292,7 +295,7 @@ export default class MapContainer extends React.Component<
   private getImageSize(image: Image, zoomLevel: number): [number, number] {
     const area = Math.min(
       Math.max(Math.pow(2, 1.5 * zoomLevel) * 0.1, 30 * 30),
-      80 * 80
+      80 * 80,
     );
     // const aspectRatio = image.aspectRatio;
     const aspectRatio = 1;
@@ -304,7 +307,7 @@ export default class MapContainer extends React.Component<
   private getBounds = memoizeOne((travels: Travel[]) => {
     let bounds = new L.LatLngBounds(
       travels[0].bounds.getSouthWest(),
-      travels[0].bounds.getNorthEast()
+      travels[0].bounds.getNorthEast(),
     );
     travels.forEach((travel) => {
       bounds.extend(travel.bounds);

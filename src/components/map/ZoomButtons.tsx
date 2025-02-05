@@ -2,11 +2,11 @@ import * as React from 'react';
 import { ZoomInButton, ZoomOutButton } from './ZoomButton';
 
 interface ZoomButtonsProps {
-  zoomLevel: number,
-  minZoomLevel: number,
-  maxZoomLevel: number,
-  onZoomLevelChange(zoomLevel: number): any,
-};
+  zoomLevel: number;
+  minZoomLevel: number;
+  maxZoomLevel: number;
+  onZoomLevelChange(zoomLevel: number): any;
+}
 
 export default class ZoomButtons extends React.Component<ZoomButtonsProps, {}> {
   constructor(props: ZoomButtonsProps) {

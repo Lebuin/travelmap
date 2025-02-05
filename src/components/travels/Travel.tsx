@@ -2,13 +2,14 @@ import * as geojson from 'geojson';
 import * as L from 'leaflet';
 import memoize from 'memoize-one';
 import * as React from 'react';
-import { MdOutlineDirectionsBike, MdOutlineDirectionsWalk } from 'react-icons/md';
+import {
+  MdOutlineDirectionsBike,
+  MdOutlineDirectionsWalk,
+} from 'react-icons/md';
 import togpx from 'togpx';
 import { format } from 'util';
 import Icon from '../icon';
 import Image from '../slideshow/Image';
-
-
 
 const MONTHS = [
   'jan',
@@ -24,7 +25,6 @@ const MONTHS = [
   'nov',
   'dec',
 ];
-
 
 export class TravelType {
   public static BIKING = new TravelType('biking', 'fa-biking');
@@ -45,7 +45,7 @@ export class TravelType {
   }
 
   static parse(s: string): TravelType {
-    switch(s) {
+    switch (s) {
       case 'biking':
         return TravelType.BIKING;
       case 'hiking':
@@ -62,12 +62,10 @@ export class TravelType {
         return TravelType.UNKNOWN;
     }
   }
-};
-
+}
 
 export type TravelData = geojson.FeatureCollection<geojson.LineString>;
 export type TravelSegment = geojson.Feature<geojson.LineString>;
-
 
 export default class Travel {
   readonly id: string;
@@ -100,18 +98,17 @@ export default class Travel {
     this.bounds = bounds;
     this.images = images;
 
-    for(const image of images) {
+    for (const image of images) {
       image.travel = this;
     }
   }
-
 
   hasData(accuracy = 0) {
     return !!this._data[accuracy];
   }
 
   async getData(accuracy = 0): Promise<TravelData> {
-    if(this.hasData(accuracy)) {
+    if (this.hasData(accuracy)) {
       return this._data[accuracy];
     } else {
       return this._fetchData(accuracy);
@@ -124,9 +121,7 @@ export default class Travel {
     const data = await response.json();
     this._data[accuracy] = data;
     return data;
-  })
-
-
+  });
 
   async download() {
     let jsonData = await this.getData();
@@ -145,17 +140,25 @@ export default class Travel {
     document.body.removeChild(elem);
   }
 
-
   renderIcon() {
-    if(this.types.length === 1 && this.types[0] === TravelType.BIKING) {
+    if (this.types.length === 1 && this.types[0] === TravelType.BIKING) {
       return <Icon icon={MdOutlineDirectionsBike} />;
-    } else if(this.types.length === 1 && this.types[0] === TravelType.HIKING) {
+    } else if (this.types.length === 1 && this.types[0] === TravelType.HIKING) {
       return <Icon icon={MdOutlineDirectionsWalk} />;
     } else {
       return (
         <React.Fragment>
-          <Icon icon={MdOutlineDirectionsBike} size={22} style={{ transform: 'translate(18%,  13%)' }} />
-          <Icon icon={MdOutlineDirectionsWalk} className="secondary-icon" size={22} style={{ transform: 'translate(-10%, -13%)' }} />
+          <Icon
+            icon={MdOutlineDirectionsBike}
+            size={22}
+            style={{ transform: 'translate(18%,  13%)' }}
+          />
+          <Icon
+            icon={MdOutlineDirectionsWalk}
+            className="secondary-icon"
+            size={22}
+            style={{ transform: 'translate(-10%, -13%)' }}
+          />
         </React.Fragment>
       );
     }
@@ -166,7 +169,9 @@ export default class Travel {
       '%s %s%s – %s %s %s',
       this.start.getDate(),
       MONTHS[this.start.getMonth()],
-      this.start.getFullYear() === this.end.getFullYear() ? '' : ' ' + this.start.getFullYear(),
+      this.start.getFullYear() === this.end.getFullYear()
+        ? ''
+        : ' ' + this.start.getFullYear(),
       this.end.getDate(),
       MONTHS[this.end.getMonth()],
       this.end.getFullYear(),

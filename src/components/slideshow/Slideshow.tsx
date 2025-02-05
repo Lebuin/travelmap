@@ -1,23 +1,28 @@
 import Swipeable from '@/lib/Swipeable';
 import { isMobile } from '@/lib/util';
 import * as React from 'react';
-import { MdOutlineChevronLeft, MdOutlineChevronRight, MdOutlineClose } from 'react-icons/md';
+import {
+  MdOutlineChevronLeft,
+  MdOutlineChevronRight,
+  MdOutlineClose,
+} from 'react-icons/md';
 import { CSSTransition } from 'react-transition-group';
 import Icon from '../icon';
 import Image from './Image';
 
-
 interface SlideshowProps {
-  image: Image,
-  setSelectedImage(image: Image | undefined): any,
+  image: Image;
+  setSelectedImage(image: Image | undefined): any;
 }
 
 interface SlideshowState {
-  showNavigation: boolean
+  showNavigation: boolean;
 }
 
-
-export default class Slideshow extends React.Component<SlideshowProps, SlideshowState> {
+export default class Slideshow extends React.Component<
+  SlideshowProps,
+  SlideshowState
+> {
   private hideNavigationTimeout: number = 0;
   private nodeRefs: React.RefObject<HTMLDivElement | null>[];
 
@@ -42,21 +47,19 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     this.next = this.next.bind(this);
   }
 
-
   componentDidMount() {
     document.addEventListener('keydown', this.onKeyDown);
-    if(isMobile()) {
+    if (isMobile()) {
       document.documentElement.requestFullscreen({ navigationUI: 'hide' });
     }
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
-    if(isMobile()) {
+    if (isMobile()) {
       document.exitFullscreen();
     }
   }
-
 
   onMouseMove() {
     this.showNavigation();
@@ -64,9 +67,8 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     this.hideNavigationTimeout = window.setTimeout(this.hideNavigation, 3000);
   }
 
-
   onKeyDown(event: KeyboardEvent) {
-    switch(event.key) {
+    switch (event.key) {
       case 'Escape':
         return this.exit();
       case 'ArrowLeft':
@@ -75,8 +77,6 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
         return this.next();
     }
   }
-
-
 
   showNavigation() {
     this.setState({
@@ -89,17 +89,15 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     });
   }
 
-
   exit() {
     this.props.setSelectedImage(undefined);
   }
-
 
   previous() {
     const image = this.props.image;
     const images = image.travel.images;
     const i = images.indexOf(image);
-    if(i > 0) {
+    if (i > 0) {
       this.props.setSelectedImage(images[i - 1]);
     }
   }
@@ -108,18 +106,21 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     const image = this.props.image;
     const images = image.travel.images;
     const i = images.indexOf(image);
-    if(i < images.length - 1) {
+    if (i < images.length - 1) {
       this.props.setSelectedImage(images[i + 1]);
     }
   }
 
-
   render() {
     let image = null;
-    if(this.props.image) {
-      image = (<img className="slideshow__img" src={this.props.image.url} />);
+    if (this.props.image) {
+      image = (
+        <img
+          className="slideshow__img"
+          src={this.props.image.url}
+        />
+      );
     }
-
 
     return (
       <Swipeable
@@ -142,7 +143,10 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
             onMouseMove={this.onMouseMove}
           >
             <div className="slideshow__exit">
-              <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
+              <div
+                className="btn btn--round btn--dark btn--slideshow"
+                onClick={this.exit}
+              >
                 <Icon icon={MdOutlineClose} />
               </div>
             </div>
@@ -160,7 +164,10 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
                 ref={this.nodeRefs[1]}
                 className="slideshow__nav slideshow__nav--prev"
               >
-                <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
+                <div
+                  className="btn btn--round btn--dark btn--slideshow"
+                  onClick={this.previous}
+                >
                   <Icon icon={MdOutlineChevronLeft} />
                 </div>
               </div>
@@ -179,7 +186,10 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
                 ref={this.nodeRefs[2]}
                 className="slideshow__nav slideshow__nav--next"
               >
-                <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
+                <div
+                  className="btn btn--round btn--dark btn--slideshow"
+                  onClick={this.next}
+                >
                   <Icon icon={MdOutlineChevronRight} />
                 </div>
               </div>
@@ -189,6 +199,6 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
           </div>
         </CSSTransition>
       </Swipeable>
-    )
+    );
   }
 }

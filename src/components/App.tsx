@@ -44,7 +44,7 @@ export default class App extends React.Component<{}, AppState> {
     const imageFilename = stateService.get('image');
     if (imageFilename && state.selectedTravel) {
       state.selectedImage = state.selectedTravel.images.find(
-        (image) => image.filename === imageFilename
+        (image) => image.filename === imageFilename,
       );
     }
 
@@ -75,10 +75,12 @@ export default class App extends React.Component<{}, AppState> {
           setSelectedImage={this.setSelectedImage}
         />
 
-        {this.state.selectedImage && <Slideshow
-          image={this.state.selectedImage}
-          setSelectedImage={this.setSelectedImage}
-        />}
+        {this.state.selectedImage && (
+          <Slideshow
+            image={this.state.selectedImage}
+            setSelectedImage={this.setSelectedImage}
+          />
+        )}
       </React.Fragment>
     );
   }

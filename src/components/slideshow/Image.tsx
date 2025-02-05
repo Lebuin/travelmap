@@ -1,7 +1,6 @@
 import * as L from 'leaflet';
 import Travel from '../travels/Travel';
 
-
 export default class Image {
   private _travel: Travel | null = null;
   readonly filename: string;
@@ -24,15 +23,14 @@ export default class Image {
     this.location = location;
   }
 
-
   set travel(travel: Travel) {
-    if(this._travel != null) {
+    if (this._travel != null) {
       throw Error('travel is already set');
     }
     this._travel = travel;
   }
   get travel() {
-    if(this._travel == null) {
+    if (this._travel == null) {
       throw Error('travel is not set');
     }
     return this._travel;
@@ -41,7 +39,6 @@ export default class Image {
   get aspectRatio() {
     return this.width / this.height;
   }
-
 
   get url() {
     return `/assets/images/full/${this.travel.id}/${this.filename}`;

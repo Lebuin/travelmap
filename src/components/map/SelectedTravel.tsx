@@ -1,19 +1,25 @@
 import Image from '@/components/slideshow/Image';
 import Travel from '@/components/travels/Travel';
 import * as React from 'react';
-import { MdOutlineClose, MdOutlineDownload, MdOutlineImage, MdOutlineLocationOn } from 'react-icons/md';
+import {
+  MdOutlineClose,
+  MdOutlineDownload,
+  MdOutlineImage,
+  MdOutlineLocationOn,
+} from 'react-icons/md';
 import Icon from '../icon';
 import ElevationMap from './ElevationMap';
 
-
 interface SelectedTravelProps {
-  travel: Travel,
-  setSelectedTravel(travel?: Travel): any,
-  setSelectedImage(image: Image): any,
-};
+  travel: Travel;
+  setSelectedTravel(travel?: Travel): any;
+  setSelectedImage(image: Image): any;
+}
 
-
-export default class SelectedTravel extends React.Component<SelectedTravelProps, {}> {
+export default class SelectedTravel extends React.Component<
+  SelectedTravelProps,
+  {}
+> {
   constructor(props: SelectedTravelProps) {
     super(props);
     this._bind();
@@ -27,7 +33,7 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
   }
 
   openSlideshow() {
-    if(this.props.travel.images.length > 0) {
+    if (this.props.travel.images.length > 0) {
       this.props.setSelectedImage(this.props.travel.images[0]);
     }
   }
@@ -44,7 +50,6 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
     this.props.travel.download();
   }
 
-
   render() {
     return (
       <div className="selected-travel">
@@ -58,29 +63,43 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
             {this.props.travel.renderIcon()}
           </div>
           <div className="selected-travel__content">
-            <div className="selected-travel__name">{this.props.travel.name}</div>
+            <div className="selected-travel__name">
+              {this.props.travel.name}
+            </div>
             <div className="selected-travel__info">
               {this.props.travel.renderDateRange()}
             </div>
           </div>
 
-          {this.props.travel.images.length > 0 &&
-            <div className="btn btn--round" onClick={this.openSlideshow}>
+          {this.props.travel.images.length > 0 && (
+            <div
+              className="btn btn--round"
+              onClick={this.openSlideshow}
+            >
               <Icon icon={MdOutlineImage} />
             </div>
-          }
-          <div className="btn btn--round" onClick={this.fitBounds}>
+          )}
+          <div
+            className="btn btn--round"
+            onClick={this.fitBounds}
+          >
             <Icon icon={MdOutlineLocationOn} />
           </div>
-          <div className="btn btn--round" onClick={this.download}>
+          <div
+            className="btn btn--round"
+            onClick={this.download}
+          >
             <Icon icon={MdOutlineDownload} />
           </div>
-          <div style={{flex: 1}}></div>
-          <div className="btn btn--round" onClick={this.exit}>
+          <div style={{ flex: 1 }}></div>
+          <div
+            className="btn btn--round"
+            onClick={this.exit}
+          >
             <Icon icon={MdOutlineClose} />
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
