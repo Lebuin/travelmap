@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { MdOutlineClose, MdOutlineLayers } from 'react-icons/md';
 import { CSSTransition } from 'react-transition-group';
+import Icon from '../icon';
 import tileProviders, { TileProvider } from './tileProviders';
 
 
@@ -14,6 +16,8 @@ interface LayerPickerState {
 
 
 export default class LayerPicker extends React.Component<LayerPickerProps, LayerPickerState> {
+  private nodeRefs: React.RefObject<HTMLDivElement | null>[];
+
   constructor(props: LayerPickerProps) {
     super(props);
     this._bind();
@@ -21,6 +25,8 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
     this.state = {
       showMenu: false,
     };
+
+    this.nodeRefs = [React.createRef(), React.createRef()];
   }
 
   _bind() {
@@ -34,7 +40,7 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
     });
   }
 
-  setTileProvider(tileProvider) {
+  setTileProvider(tileProvider: TileProvider) {
     this.props.setTileProvider(tileProvider);
     this.setState({
       showMenu: false,
@@ -49,7 +55,7 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
           className="btn btn--map"
           onClick={this.toggleMenu}
         >
-          <i className="far fa-layer-group"></i>
+          <Icon icon={MdOutlineLayers} />
         </button>
 
         {this.renderMenu()}
@@ -62,6 +68,7 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
     return (
       <React.Fragment>
         <CSSTransition
+          nodeRef={this.nodeRefs[0]}
           in={this.state.showMenu}
           timeout={{
             enter: 500,
@@ -69,10 +76,15 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
           }}
           classNames="animate"
         >
-          <div className="layer-picker__overlay" onClick={this.toggleMenu}></div>
+          <div
+            ref={this.nodeRefs[0]}
+            className="layer-picker__overlay"
+            onClick={this.toggleMenu}
+          ></div>
         </CSSTransition>
 
         <CSSTransition
+          nodeRef={this.nodeRefs[1]}
           in={this.state.showMenu}
           timeout={{
             enter: 300,
@@ -80,11 +92,14 @@ export default class LayerPicker extends React.Component<LayerPickerProps, Layer
           }}
           classNames="animate"
         >
-          <div className="layer-picker__box">
+          <div
+            ref={this.nodeRefs[1]}
+            className="layer-picker__box"
+          >
             <div className="layer-picker__header">
               <h2 className="layer-picker__title">Layers</h2>
               <div className="btn btn--round" onClick={this.toggleMenu}>
-                <i className="far fa-times"></i>
+                <Icon icon={MdOutlineClose} />
               </div>
             </div>
 

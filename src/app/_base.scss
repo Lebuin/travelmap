@@ -1,12 +1,14 @@
-html, body {
+html,
+body {
   margin: 0;
   height: 100%;
   font-family: 'Roboto', sans-serif;
 }
 
 
-#root {
-  height: 100%;
+body {
+  display: flex;
+  flex-direction: column;
 }
 
 
@@ -40,9 +42,11 @@ h3 {
   &:hover {
     background: rgba(0, 0, 0, .05);
   }
+
   &:focus {
     outline: none;
   }
+
   &:active,
   &.active {
     background: rgba(0, 0, 0, .1);
@@ -51,9 +55,11 @@ h3 {
 
   &--dark {
     color: white;
+
     &:hover {
       background: rgba(255, 255, 255, .2);
     }
+
     &:active,
     &.active {
       background: rgba(255, 255, 255, .3);
@@ -63,9 +69,11 @@ h3 {
 
   &--white {
     background: white;
+
     &:hover {
       background: adjust-color(white, $lightness: -5%);
     }
+
     &:active,
     &.active {
       background: adjust-color(white, $lightness: -10%);

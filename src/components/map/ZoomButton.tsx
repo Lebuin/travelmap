@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { IconType } from 'react-icons';
+import { MdOutlineAdd, MdOutlineRemove } from 'react-icons/md';
+import Icon from '../icon';
 
 interface ZoomButtonProps {
   disabled: boolean,
@@ -6,7 +9,7 @@ interface ZoomButtonProps {
 }
 
 abstract class ZoomButton extends React.Component<ZoomButtonProps, {}> {
-  faName: string;
+  abstract readonly icon: IconType;
 
   render() {
     return <button
@@ -14,14 +17,14 @@ abstract class ZoomButton extends React.Component<ZoomButtonProps, {}> {
       onClick={this.props.onClick}
       disabled={this.props.disabled}
     >
-      <i className={`far ${this.faName}`}></i>
+      <Icon icon={this.icon} />
     </button>
   }
 }
 
 export class ZoomInButton extends ZoomButton {
-  faName = 'fa-plus';
+  readonly icon = MdOutlineAdd;
 }
 export class ZoomOutButton extends ZoomButton {
-  faName = 'fa-minus';
+  readonly icon = MdOutlineRemove;
 }

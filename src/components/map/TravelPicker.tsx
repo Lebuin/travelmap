@@ -1,11 +1,13 @@
+import Travel from '@/components/travels/Travel';
 import * as React from 'react';
+import { MdOutlineClose, MdOutlineRoute } from 'react-icons/md';
 import { CSSTransition } from 'react-transition-group';
-import Travel from '../travels/Travel';
+import Icon from '../icon';
 
 
 interface TravelPickerProps {
   travels: Array<Travel>,
-  selectedTravel: Travel,
+  selectedTravel?: Travel,
   setSelectedTravel(travel: Travel): any,
 }
 
@@ -15,6 +17,8 @@ interface TravelPickerState {
 
 
 export default class TravelPicker extends React.Component<TravelPickerProps, TravelPickerState> {
+  private nodeRefs: React.RefObject<HTMLDivElement | null>[];
+
   constructor(props: TravelPickerProps) {
     super(props);
     this._bind();
@@ -22,6 +26,8 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
     this.state = {
       showMenu: false,
     };
+
+    this.nodeRefs = [React.createRef(), React.createRef()];
   }
 
   _bind() {
@@ -36,7 +42,7 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
   }
 
 
-  setTravel(travel, event) {
+  setTravel(travel: Travel) {
     this.props.setSelectedTravel(travel);
     this.setState({
       showMenu: false,
@@ -51,7 +57,7 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
           className="btn btn--map"
           onClick={this.toggleMenu}
         >
-          <i className="far fa-route"></i>
+          <Icon icon={MdOutlineRoute} />
         </button>
 
         {this.renderMenu()}
@@ -64,6 +70,7 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
     return (
       <React.Fragment>
         <CSSTransition
+          nodeRef={this.nodeRefs[0]}
           in={this.state.showMenu}
           timeout={{
             enter: 500,
@@ -71,10 +78,15 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
           }}
           classNames="animate"
         >
-          <div className="layer-picker__overlay" onClick={this.toggleMenu}></div>
+          <div
+            ref={this.nodeRefs[0]}
+            className="layer-picker__overlay"
+            onClick={this.toggleMenu}
+          ></div>
         </CSSTransition>
 
         <CSSTransition
+          nodeRef={this.nodeRefs[1]}
           in={this.state.showMenu}
           timeout={{
             enter: 300,
@@ -82,11 +94,14 @@ export default class TravelPicker extends React.Component<TravelPickerProps, Tra
           }}
           classNames="animate"
         >
-          <div className="layer-picker__box">
+          <div
+            ref={this.nodeRefs[1]}
+            className="layer-picker__box"
+          >
             <div className="layer-picker__header">
               <h2 className="layer-picker__title">Travels</h2>
               <div className="btn btn--round" onClick={this.toggleMenu}>
-                <i className="far fa-times"></i>
+                <Icon icon={MdOutlineClose} />
               </div>
             </div>
             <div className="layer-picker__content">

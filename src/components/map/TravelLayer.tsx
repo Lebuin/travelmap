@@ -1,6 +1,7 @@
+import Travel, { TravelData, TravelType } from '@/components/travels/Travel';
+import * as L from 'leaflet';
 import * as React from 'react';
-import { FeatureGroup, GeoJSON } from 'react-leaflet';
-import Travel, { TravelData, TravelSegment, TravelType } from '../travels/Travel';
+import { GeoJSON } from 'react-leaflet';
 
 
 interface TravelLayerProps {
@@ -15,7 +16,7 @@ interface TravelLayerProps {
 interface TravelLayerState {
   travel: Travel,
   accuracy: number,
-  data: TravelData,
+  data?: TravelData,
 }
 
 const MAX_TOLERANCE_IN_PIXELS = 2;
@@ -23,7 +24,7 @@ const TRACK_ACCURACIES_IN_DEGREES = [0, .001, .01];
 
 
 export default class TravelLayer extends React.Component<TravelLayerProps, TravelLayerState> {
-  private layer: FeatureGroup;
+  private layer?: L.GeoJSON;
 
   constructor(props: TravelLayerProps) {
     super(props);
@@ -32,7 +33,7 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
     this.state = {
       travel: this.props.travel,
       accuracy: -1,
-      data: null,
+      data: undefined,
     };
   }
 
@@ -75,19 +76,21 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
         data={this.state.data}
         style={this.getStyle}
         ref={this.bindLayer}
-        onClick={() => this.props.setSelectedTravel(this.state.travel)}
+        eventHandlers={{
+          click: () => this.props.setSelectedTravel(this.state.travel),
+        }}
         interactive={!this.props.isSelected}
       />
     )
   }
 
 
-  bindLayer(layer: any) {
+  bindLayer(layer: L.GeoJSON) {
     this.layer = layer;
   }
 
 
-  getStyle(segment: TravelSegment) {
+  getStyle(segment: any) {
     let style: L.PathOptions = {
       color: this.state.travel.color,
       opacity: this.props.isUnfocused ? .5 : 1,
@@ -113,21 +116,25 @@ export default class TravelLayer extends React.Component<TravelLayerProps, Trave
 
 
   getBounds() {
-    return this.layer.leafletElement.getBounds();
+    return this.layer?.getBounds();
   }
 
 
-  getAccuracy(isInViewport: boolean, zoomLevel: number) {
+  getAccuracy(isInViewport: boolean, zoomLevel: number): number {
     if(!isInViewport) {
       return TRACK_ACCURACIES_IN_DEGREES[TRACK_ACCURACIES_IN_DEGREES.length - 1];
     }
 
     let pixelSizeInDegrees = this.getPixelSizeInDegrees(zoomLevel);
     let desiredAccuracy = MAX_TOLERANCE_IN_PIXELS * pixelSizeInDegrees;
-    return TRACK_ACCURACIES_IN_DEGREES
+    const accuracy = TRACK_ACCURACIES_IN_DEGREES
       .slice()
       .reverse()
       .find(accuracy => accuracy < desiredAccuracy);
+    if(accuracy == null) {
+      throw new Error('No accuracy found');
+    }
+    return accuracy;
   }
 
   getPixelSizeInDegrees(zoomLevel: number) {

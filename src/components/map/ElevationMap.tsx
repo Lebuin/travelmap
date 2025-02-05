@@ -1,9 +1,9 @@
+import Travel, { TravelData, TravelSegment, TravelType } from '@/components/travels/Travel';
 import * as geolib from 'geolib';
+import _ from 'lodash';
 import memoize from 'memoize-one';
 import * as React from 'react';
 import { format } from 'util';
-import Travel, { TravelData, TravelSegment, TravelType } from '../travels/Travel';
-import _ from 'lodash';
 
 
 interface ElevationMapProps {
@@ -13,7 +13,7 @@ interface ElevationMapProps {
 interface ElevationMapState {
   width: number,
   height: number,
-  data: TravelData,
+  data: TravelData | null,
 };
 
 
@@ -112,7 +112,7 @@ export default class ElevationMap extends React.Component<ElevationMapProps, Ele
   }
 
 
-  renderShapes = memoize((travel: Travel, data: TravelData, widthPx: number, heightPx: number) => {
+  renderShapes = memoize((travel: Travel, data: TravelData | null, widthPx: number, heightPx: number) => {
     if(data == null || widthPx <= 0 || heightPx <= 0) {
       return null;
     }

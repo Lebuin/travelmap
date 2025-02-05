@@ -1,15 +1,23 @@
+import * as allImageDefs from '@/assets/images.json';
+import * as travelDefs from '@/assets/travels.json';
 import * as L from 'leaflet';
-import * as travelDefs from '../assets/travels.json';
-import * as allImageDefs from '../assets/images.json';
-import Travel, { TravelType } from './Travel';
 import Image from '../slideshow/Image';
+import Travel, { TravelType } from './Travel';
 
+interface ImageDef {
+  filename: string,
+  dateCreated: string,
+  width: number,
+  height: number,
+  lat: number | null,
+  lng: number | null,
+}
 
 // We mark images taken within 10 seconds of each other as panoramas.
 const PANORAMA_THRESHOLD = 10 * 1000;
 
 
-function createImageFromDef(imageDef: any) {
+function createImageFromDef(imageDef: ImageDef) {
   const location = imageDef.lat == null || imageDef.lng == null ?
     null :
     new L.LatLng(imageDef.lat, imageDef.lng);
@@ -41,7 +49,7 @@ function printPanoramas(travel: Travel) {
 
 
 const travels = Array.from(travelDefs).map(travelDef => {
-  const imageDefs = allImageDefs[travelDef.id] || [];
+  const imageDefs = allImageDefs[travelDef.id as keyof typeof allImageDefs] as ImageDef[];
   const images = Array.from(imageDefs).map(createImageFromDef);
 
   const travel = new Travel(

@@ -1,12 +1,19 @@
 class StateService {
-  private state = {};
+  private state: Record<string, string> = {};
+  private initialized = false;
 
-  constructor() {
+  initialize() {
+    if(this.initialized) {
+      return;
+    }
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.forEach((value, key) => this.state[key] = value);
+    this.initialized = true;
   }
 
-  set(key, value) {
+  set(key: string, value: string) {
+    this.initialize();
+
     if(value == null && this.state[key] == null || value === this.state[key]) {
       return;
     }
@@ -17,10 +24,11 @@ class StateService {
     }
     const searchParams = new URLSearchParams(this.state);
     const url = '?' + searchParams.toString().replace(/%2C/g, ',');
-    window.history.pushState('', '', url);
+    window.history.pushState({}, '', url);
   }
 
-  get(key) {
+  get(key: string) {
+    this.initialize();
     return this.state[key];
   }
 }

@@ -1,23 +1,20 @@
-import './app.scss';
+'use client';
 
+import stateService from '@/lib/stateService';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import Image from './slideshow/Image';
 import { MapContainer } from './map';
+import Image from './slideshow/Image';
 import Slideshow from './slideshow/Slideshow';
 import Travel from './travels/Travel';
 import travels from './travels/travels';
-import stateService from './stateService';
-
 
 interface AppState {
-  travels: Travel[],
-  selectedTravel: Travel,
-  selectedImage: Image,
+  travels: Travel[];
+  selectedTravel?: Travel;
+  selectedImage?: Image;
 }
 
-
-class App extends React.Component<{}, AppState> {
+export default class App extends React.Component<{}, AppState> {
   constructor(props: {}) {
     super(props);
     this._bind();
@@ -33,27 +30,26 @@ class App extends React.Component<{}, AppState> {
     this.setSelectedImage = this.setSelectedImage.bind(this);
   }
 
-
   popState() {
-    const state = {
-      selectedTravel: null as Travel,
-      selectedImage: null as Image,
+    const state: Partial<AppState> = {
+      selectedTravel: undefined,
+      selectedImage: undefined,
     };
 
     const travelId = stateService.get('travel');
-    if(travelId) {
-      state.selectedTravel = travels.find(travel => travel.id === travelId);
+    if (travelId) {
+      state.selectedTravel = travels.find((travel) => travel.id === travelId);
     }
 
     const imageFilename = stateService.get('image');
-    if(imageFilename && state.selectedTravel) {
-      state.selectedImage = state.selectedTravel.images
-        .find(image => image.filename === imageFilename);
+    if (imageFilename && state.selectedTravel) {
+      state.selectedImage = state.selectedTravel.images.find(
+        (image) => image.filename === imageFilename
+      );
     }
 
     return state;
   }
-
 
   setSelectedTravel(travel: Travel) {
     this.setState({
@@ -69,7 +65,6 @@ class App extends React.Component<{}, AppState> {
     stateService.set('image', image?.filename);
   }
 
-
   public render() {
     return (
       <React.Fragment>
@@ -80,14 +75,11 @@ class App extends React.Component<{}, AppState> {
           setSelectedImage={this.setSelectedImage}
         />
 
-        <Slideshow
+        {this.state.selectedImage && <Slideshow
           image={this.state.selectedImage}
           setSelectedImage={this.setSelectedImage}
-        />
+        />}
       </React.Fragment>
     );
   }
 }
-
-
-ReactDOM.render(<App />, document.getElementById('root'));

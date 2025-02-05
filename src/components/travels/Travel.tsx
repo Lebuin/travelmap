@@ -1,9 +1,11 @@
 import * as geojson from 'geojson';
+import * as L from 'leaflet';
 import memoize from 'memoize-one';
 import * as React from 'react';
+import { MdOutlineDirectionsBike, MdOutlineDirectionsWalk } from 'react-icons/md';
 import togpx from 'togpx';
 import { format } from 'util';
-import * as L from 'leaflet';
+import Icon from '../icon';
 import Image from '../slideshow/Image';
 
 
@@ -108,7 +110,7 @@ export default class Travel {
     return !!this._data[accuracy];
   }
 
-  async getData(accuracy = 0) {
+  async getData(accuracy = 0): Promise<TravelData> {
     if(this.hasData(accuracy)) {
       return this._data[accuracy];
     } else {
@@ -126,8 +128,8 @@ export default class Travel {
 
 
 
-  download() {
-    let jsonData = this.getData();
+  async download() {
+    let jsonData = await this.getData();
     let data = togpx(jsonData);
     let filename = this.name + '.gpx';
     let mimetype = 'application/gpx+xml';
@@ -146,14 +148,14 @@ export default class Travel {
 
   renderIcon() {
     if(this.types.length === 1 && this.types[0] === TravelType.BIKING) {
-      return <i className="far fa-biking"></i>;
+      return <Icon icon={MdOutlineDirectionsBike} />;
     } else if(this.types.length === 1 && this.types[0] === TravelType.HIKING) {
-      return <i className="far fa-hiking"></i>;
+      return <Icon icon={MdOutlineDirectionsWalk} />;
     } else {
       return (
         <React.Fragment>
-          <i className="far fa-biking"                style={{ fontSize: '85%', transform: 'translate( 12%,  13%)' }}></i>
-          <i className="far fa-hiking secondary-icon" style={{ fontSize: '85%', transform: 'translate(-12%, -13%)' }}></i>
+          <Icon icon={MdOutlineDirectionsBike} size={22} style={{ transform: 'translate(18%,  13%)' }} />
+          <Icon icon={MdOutlineDirectionsWalk} className="secondary-icon" size={22} style={{ transform: 'translate(-10%, -13%)' }} />
         </React.Fragment>
       );
     }

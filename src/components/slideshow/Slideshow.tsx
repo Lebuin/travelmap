@@ -1,13 +1,15 @@
+import Swipeable from '@/lib/Swipeable';
+import { isMobile } from '@/lib/util';
 import * as React from 'react';
+import { MdOutlineChevronLeft, MdOutlineChevronRight, MdOutlineClose } from 'react-icons/md';
 import { CSSTransition } from 'react-transition-group';
+import Icon from '../icon';
 import Image from './Image';
-import Swipeable from '../lib/Swipeable';
-import { isMobile } from '../util';
 
 
 interface SlideshowProps {
   image: Image,
-  setSelectedImage(image: Image): any,
+  setSelectedImage(image: Image | undefined): any,
 }
 
 interface SlideshowState {
@@ -16,7 +18,8 @@ interface SlideshowState {
 
 
 export default class Slideshow extends React.Component<SlideshowProps, SlideshowState> {
-  hideNavigationTimeout: number;
+  private hideNavigationTimeout: number = 0;
+  private nodeRefs: React.RefObject<HTMLDivElement | null>[];
 
   constructor(props: SlideshowProps) {
     super(props);
@@ -25,6 +28,8 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
     this.state = {
       showNavigation: false,
     };
+
+    this.nodeRefs = [React.createRef(), React.createRef(), React.createRef()];
   }
 
   _bind() {
@@ -40,20 +45,16 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
 
   componentDidMount() {
     document.addEventListener('keydown', this.onKeyDown);
-  }
-
-  componentDidUpdate(prevProps: SlideshowProps) {
-    if(!!this.props.image !== !!prevProps.image && isMobile()) {
-      if(this.props.image) {
-        document.documentElement.requestFullscreen({ navigationUI: 'hide' });
-      } else {
-        document.exitFullscreen();
-      }
+    if(isMobile()) {
+      document.documentElement.requestFullscreen({ navigationUI: 'hide' });
     }
   }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
+    if(isMobile()) {
+      document.exitFullscreen();
+    }
   }
 
 
@@ -64,7 +65,7 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
   }
 
 
-  onKeyDown(event) {
+  onKeyDown(event: KeyboardEvent) {
     switch(event.key) {
       case 'Escape':
         return this.exit();
@@ -90,7 +91,7 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
 
 
   exit() {
-    this.props.setSelectedImage(null);
+    this.props.setSelectedImage(undefined);
   }
 
 
@@ -126,6 +127,7 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
         onSwipedRight={this.previous}
       >
         <CSSTransition
+          nodeRef={this.nodeRefs[0]}
           appear={true}
           in={!!this.props.image}
           timeout={{
@@ -134,14 +136,19 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
           }}
           classNames="animate"
         >
-          <div className="slideshow" onMouseMove={this.onMouseMove}>
+          <div
+            ref={this.nodeRefs[0]}
+            className="slideshow"
+            onMouseMove={this.onMouseMove}
+          >
             <div className="slideshow__exit">
               <div className="btn btn--round btn--dark btn--slideshow" onClick={this.exit}>
-                <i className="far fa-times"></i>
+                <Icon icon={MdOutlineClose} />
               </div>
             </div>
 
             <CSSTransition
+              nodeRef={this.nodeRefs[1]}
               in={!!this.state.showNavigation}
               timeout={{
                 enter: 300,
@@ -149,14 +156,18 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
               }}
               classNames="animate"
             >
-              <div className="slideshow__nav slideshow__nav--prev">
+              <div
+                ref={this.nodeRefs[1]}
+                className="slideshow__nav slideshow__nav--prev"
+              >
                 <div className="btn btn--round btn--dark btn--slideshow" onClick={this.previous}>
-                  <i className="far fa-chevron-left"></i>
+                  <Icon icon={MdOutlineChevronLeft} />
                 </div>
               </div>
             </CSSTransition>
 
             <CSSTransition
+              nodeRef={this.nodeRefs[2]}
               in={!!this.state.showNavigation}
               timeout={{
                 enter: 300,
@@ -164,9 +175,12 @@ export default class Slideshow extends React.Component<SlideshowProps, Slideshow
               }}
               classNames="animate"
             >
-              <div className="slideshow__nav slideshow__nav--next">
+              <div
+                ref={this.nodeRefs[2]}
+                className="slideshow__nav slideshow__nav--next"
+              >
                 <div className="btn btn--round btn--dark btn--slideshow" onClick={this.next}>
-                  <i className="far fa-chevron-right"></i>
+                  <Icon icon={MdOutlineChevronRight} />
                 </div>
               </div>
             </CSSTransition>

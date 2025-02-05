@@ -1,6 +1,8 @@
+import Image from '@/components/slideshow/Image';
+import Travel from '@/components/travels/Travel';
 import * as React from 'react';
-import Image from '../slideshow/Image';
-import Travel from '../travels/Travel';
+import { MdOutlineClose, MdOutlineDownload, MdOutlineImage, MdOutlineLocationOn } from 'react-icons/md';
+import Icon from '../icon';
 import ElevationMap from './ElevationMap';
 
 
@@ -44,10 +46,6 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
 
 
   render() {
-    if(!this.props.travel) {
-      return null;
-    }
-
     return (
       <div className="selected-travel">
         <div
@@ -68,18 +66,18 @@ export default class SelectedTravel extends React.Component<SelectedTravelProps,
 
           {this.props.travel.images.length > 0 &&
             <div className="btn btn--round" onClick={this.openSlideshow}>
-              <i className="far fa-images"></i>
+              <Icon icon={MdOutlineImage} />
             </div>
           }
           <div className="btn btn--round" onClick={this.fitBounds}>
-            <i className="far fa-map-marked"></i>
+            <Icon icon={MdOutlineLocationOn} />
           </div>
           <div className="btn btn--round" onClick={this.download}>
-            <i className="far fa-arrow-to-bottom"></i>
+            <Icon icon={MdOutlineDownload} />
           </div>
           <div style={{flex: 1}}></div>
           <div className="btn btn--round" onClick={this.exit}>
-            <i className="far fa-times"></i>
+            <Icon icon={MdOutlineClose} />
           </div>
         </div>
       </div>
