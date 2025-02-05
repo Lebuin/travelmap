@@ -48,9 +48,9 @@ function printPanoramas(travel: Travel) {
 }
 
 const travels = Array.from(travelDefs).map((travelDef) => {
-  const imageDefs = allImageDefs[
-    travelDef.id as keyof typeof allImageDefs
-  ] as ImageDef[];
+  console.log(travelDef);
+  const imageDefs = (allImageDefs[travelDef.id as keyof typeof allImageDefs] ??
+    []) as ImageDef[];
   const images = Array.from(imageDefs).map(createImageFromDef);
 
   const travel = new Travel(
