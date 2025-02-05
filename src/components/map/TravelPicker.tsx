@@ -7,7 +7,7 @@ import Icon from '../icon';
 interface TravelPickerProps {
   travels: Array<Travel>;
   selectedTravel?: Travel;
-  setSelectedTravel(travel: Travel): any;
+  setSelectedTravel(travel: Travel): void;
 }
 
 interface TravelPickerState {

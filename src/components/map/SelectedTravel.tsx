@@ -12,13 +12,13 @@ import ElevationMap from './ElevationMap';
 
 interface SelectedTravelProps {
   travel: Travel;
-  setSelectedTravel(travel?: Travel): any;
-  setSelectedImage(image: Image): any;
+  setSelectedTravel(travel?: Travel): void;
+  setSelectedImage(image: Image): void;
 }
 
 export default class SelectedTravel extends React.Component<
   SelectedTravelProps,
-  {}
+  object
 > {
   constructor(props: SelectedTravelProps) {
     super(props);

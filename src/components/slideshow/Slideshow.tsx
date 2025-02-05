@@ -1,5 +1,6 @@
 import Swipeable from '@/lib/Swipeable';
 import { isMobile } from '@/lib/util';
+import NextImage from 'next/image';
 import * as React from 'react';
 import {
   MdOutlineChevronLeft,
@@ -12,7 +13,7 @@ import Image from './Image';
 
 interface SlideshowProps {
   image: Image;
-  setSelectedImage(image: Image | undefined): any;
+  setSelectedImage(image: Image | undefined): void;
 }
 
 interface SlideshowState {
@@ -115,9 +116,10 @@ export default class Slideshow extends React.Component<
     let image = null;
     if (this.props.image) {
       image = (
-        <img
+        <NextImage
           className="slideshow__img"
           src={this.props.image.url}
+          alt=""
         />
       );
     }

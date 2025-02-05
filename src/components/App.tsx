@@ -14,8 +14,8 @@ interface AppState {
   selectedImage?: Image;
 }
 
-export default class App extends React.Component<{}, AppState> {
-  constructor(props: {}) {
+export default class App extends React.Component<object, AppState> {
+  constructor(props: object) {
     super(props);
     this._bind();
 

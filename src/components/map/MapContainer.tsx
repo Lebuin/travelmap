@@ -1,9 +1,9 @@
 import Image from '@/components/slideshow/Image';
 import { default as Travel } from '@/components/travels/Travel';
-import debounce from '@/lib/debounce';
 import '@/lib/SmoothWeelZoom';
 import stateService from '@/lib/stateService';
 import * as L from 'leaflet';
+import _ from 'lodash';
 import memoizeOne from 'memoize-one';
 import * as React from 'react';
 import {
@@ -26,8 +26,8 @@ const MAX_ZOOM_LEVEL: number = 21;
 interface MapContainerProps {
   travels: Travel[];
   selectedTravel: Travel | undefined;
-  setSelectedTravel(travel: Travel): any;
-  setSelectedImage(image: Image): any;
+  setSelectedTravel(travel: Travel): void;
+  setSelectedImage(image: Image): void;
 }
 
 interface MapContainerState {
@@ -127,7 +127,7 @@ export default class MapContainer extends React.Component<
     // We need to re-render to correctly set isInViewport
     this.setState({});
   }
-  bindTravelLayer(travel: Travel, layer: any) {
+  bindTravelLayer(travel: Travel, layer: TravelLayer) {
     this.refsTravelLayer[travel.id] = layer;
   }
 
@@ -151,7 +151,7 @@ export default class MapContainer extends React.Component<
     });
     this.pushState(center, zoomLevel);
   }
-  setViewportDebounced = debounce(this.setViewport, 100);
+  setViewportDebounced = _.debounce(this.setViewport, 100);
 
   onLeafletViewportChange() {
     if (this.leaflet) {
@@ -299,13 +299,13 @@ export default class MapContainer extends React.Component<
     );
     // const aspectRatio = image.aspectRatio;
     const aspectRatio = 1;
-    let height = Math.sqrt(area / aspectRatio);
-    let width = height * aspectRatio;
+    const height = Math.sqrt(area / aspectRatio);
+    const width = height * aspectRatio;
     return [width, height];
   }
 
   private getBounds = memoizeOne((travels: Travel[]) => {
-    let bounds = new L.LatLngBounds(
+    const bounds = new L.LatLngBounds(
       travels[0].bounds.getSouthWest(),
       travels[0].bounds.getNorthEast(),
     );

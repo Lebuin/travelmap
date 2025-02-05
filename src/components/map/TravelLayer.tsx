@@ -9,7 +9,7 @@ interface TravelLayerProps {
   isInViewport: boolean;
   isSelected: boolean;
   isUnfocused: boolean;
-  setSelectedTravel(travel?: Travel): any;
+  setSelectedTravel(travel?: Travel): void;
 }
 
 interface TravelLayerState {
@@ -52,7 +52,7 @@ export default class TravelLayer extends React.Component<
   }
 
   private fetchData() {
-    let accuracy = this.getAccuracy(
+    const accuracy = this.getAccuracy(
       this.props.isInViewport,
       this.props.zoomLevel,
     );
@@ -89,8 +89,9 @@ export default class TravelLayer extends React.Component<
     this.layer = layer;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getStyle(segment: any) {
-    let style: L.PathOptions = {
+    const style: L.PathOptions = {
       color: this.state.travel.color,
       opacity: this.props.isUnfocused ? 0.5 : 1,
     };
@@ -124,8 +125,8 @@ export default class TravelLayer extends React.Component<
       ];
     }
 
-    let pixelSizeInDegrees = this.getPixelSizeInDegrees(zoomLevel);
-    let desiredAccuracy = MAX_TOLERANCE_IN_PIXELS * pixelSizeInDegrees;
+    const pixelSizeInDegrees = this.getPixelSizeInDegrees(zoomLevel);
+    const desiredAccuracy = MAX_TOLERANCE_IN_PIXELS * pixelSizeInDegrees;
     const accuracy = TRACK_ACCURACIES_IN_DEGREES.slice()
       .reverse()
       .find((accuracy) => accuracy < desiredAccuracy);
@@ -136,8 +137,8 @@ export default class TravelLayer extends React.Component<
   }
 
   getPixelSizeInDegrees(zoomLevel: number) {
-    let earthWidthPixels = 256 * Math.pow(2, zoomLevel);
-    let earthWidthDegrees = 360;
+    const earthWidthPixels = 256 * Math.pow(2, zoomLevel);
+    const earthWidthDegrees = 360;
     return earthWidthDegrees / earthWidthPixels;
   }
 }

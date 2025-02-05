@@ -5,10 +5,13 @@ interface ZoomButtonsProps {
   zoomLevel: number;
   minZoomLevel: number;
   maxZoomLevel: number;
-  onZoomLevelChange(zoomLevel: number): any;
+  onZoomLevelChange(zoomLevel: number): void;
 }
 
-export default class ZoomButtons extends React.Component<ZoomButtonsProps, {}> {
+export default class ZoomButtons extends React.Component<
+  ZoomButtonsProps,
+  object
+> {
   constructor(props: ZoomButtonsProps) {
     super(props);
     this.bind();

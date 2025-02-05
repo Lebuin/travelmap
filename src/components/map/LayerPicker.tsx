@@ -6,7 +6,7 @@ import tileProviders, { TileProvider } from './tileProviders';
 
 interface LayerPickerProps {
   tileProvider: TileProvider;
-  setTileProvider(tileProvider: TileProvider): any;
+  setTileProvider(tileProvider: TileProvider): void;
 }
 
 interface LayerPickerState {

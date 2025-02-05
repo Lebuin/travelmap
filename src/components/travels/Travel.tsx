@@ -124,14 +124,14 @@ export default class Travel {
   });
 
   async download() {
-    let jsonData = await this.getData();
-    let data = togpx(jsonData);
-    let filename = this.name + '.gpx';
-    let mimetype = 'application/gpx+xml';
+    const jsonData = await this.getData();
+    const data = togpx(jsonData);
+    const filename = this.name + '.gpx';
+    const mimetype = 'application/gpx+xml';
 
-    var blob = new Blob([data], { type: mimetype });
+    const blob = new Blob([data], { type: mimetype });
 
-    let elem = document.createElement('a');
+    const elem = document.createElement('a');
     elem.href = URL.createObjectURL(blob);
     elem.download = filename;
 

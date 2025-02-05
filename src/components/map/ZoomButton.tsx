@@ -5,10 +5,10 @@ import Icon from '../icon';
 
 interface ZoomButtonProps {
   disabled: boolean;
-  onClick(): any;
+  onClick(): void;
 }
 
-abstract class ZoomButton extends React.Component<ZoomButtonProps, {}> {
+abstract class ZoomButton extends React.Component<ZoomButtonProps, object> {
   abstract readonly icon: IconType;
 
   render() {

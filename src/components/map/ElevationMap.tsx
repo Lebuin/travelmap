@@ -73,7 +73,7 @@ export default class ElevationMap extends React.Component<
     }
   }
 
-  bindElem(elem: any) {
+  bindElem(elem: HTMLElement | null) {
     if (elem) {
       this.setState({
         width: elem.clientWidth,
@@ -88,14 +88,14 @@ export default class ElevationMap extends React.Component<
   }
 
   render() {
-    let path = this.renderShapes(
+    const path = this.renderShapes(
       this.props.travel,
       this.state.data,
       this.state.width,
       this.state.height,
     );
 
-    let viewBox = format('0 0 %s %s', this.state.width, this.state.height);
+    const viewBox = format('0 0 %s %s', this.state.width, this.state.height);
 
     return (
       <div
