@@ -47,8 +47,15 @@ function printPanoramas(travel: Travel) {
   });
 }
 
+function printNonGeotagged(travel: Travel) {
+  travel.images.forEach((image) => {
+    if (!image.location) {
+      console.log(`Non-geotagged image: ${travel.id} - ${image.filename}`);
+    }
+  });
+}
+
 const travels = Array.from(travelDefs).map((travelDef) => {
-  console.log(travelDef);
   const imageDefs = (allImageDefs[travelDef.id as keyof typeof allImageDefs] ??
     []) as ImageDef[];
   const images = Array.from(imageDefs).map(createImageFromDef);
@@ -65,6 +72,7 @@ const travels = Array.from(travelDefs).map((travelDef) => {
   );
 
   printPanoramas(travel);
+  printNonGeotagged(travel);
 
   return travel;
 });

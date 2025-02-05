@@ -17,5 +17,4 @@ printf "\nCreate thumbnails...\n\n"
 ./scripts/create-thumbnails.sh
 
 npm run build
-
-exec npx http-server dist -p 80
+npm run start
