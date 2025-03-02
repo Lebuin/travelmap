@@ -32,6 +32,7 @@ export class TravelType {
 
   public static TRAIN = new TravelType('train', '');
   public static BUS = new TravelType('bus', '');
+  public static TAXI = new TravelType('taxi', '');
   public static FERRY = new TravelType('ferry', '');
   public static HITCHHIKING = new TravelType('hitchhiking', '');
   public static UNKNOWN = new TravelType('unknown', '');
@@ -54,6 +55,8 @@ export class TravelType {
         return TravelType.TRAIN;
       case 'bus':
         return TravelType.BUS;
+      case 'taxi':
+        return TravelType.TAXI;
       case 'ferry':
         return TravelType.FERRY;
       case 'hitchhiking':

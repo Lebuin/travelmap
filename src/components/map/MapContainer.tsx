@@ -21,7 +21,7 @@ import TravelPicker from './TravelPicker';
 import ZoomButtons from './ZoomButtons';
 
 const MIN_ZOOM_LEVEL: number = 0;
-const MAX_ZOOM_LEVEL: number = 21;
+const MAX_ZOOM_LEVEL: number = 18;
 
 interface MapContainerProps {
   travels: Travel[];
