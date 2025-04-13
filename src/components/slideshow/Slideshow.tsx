@@ -120,6 +120,7 @@ export default class Slideshow extends React.Component<
           className="slideshow__img"
           src={this.props.image.url}
           alt=""
+          unoptimized
         />
       );
     }
