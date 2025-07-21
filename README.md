@@ -19,7 +19,7 @@ Run:
 
 ```
 npm install
-npm start
+npm run dev
 ```
 
 Visit localhost:8080
